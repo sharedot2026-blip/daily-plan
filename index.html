@@ -1,0 +1,633 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>3개월(90일) 건강 & 학습 실천 플래너</title>
+<style>
+  :root {
+    --primary: #1F3A52;
+    --primary-light: #2E5275;
+    --accent: #3B82F6;
+    --accent-bg: #EFF6FF;
+    --success: #10B981;
+    --success-bg: #ECFDF5;
+    --bg: #F1F5F9;
+    --card: #FFFFFF;
+    --text: #1E293B;
+    --muted: #64748B;
+    --border: #E2E8F0;
+  }
+  * {
+    box-sizing: border-box;
+    -webkit-tap-highlight-color: transparent;
+  }
+  body {
+    margin: 0;
+    padding: 0;
+    font-family: -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Malgun Gothic", "Noto Sans KR", sans-serif;
+    background-color: var(--bg);
+    color: var(--text);
+    line-height: 1.45;
+  }
+  .app-container {
+    max-width: 540px;
+    margin: 0 auto;
+    min-height: 100vh;
+    background: var(--bg);
+    padding-bottom: 40px;
+  }
+  /* Header */
+  .header {
+    background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+    color: #fff;
+    padding: 18px 16px 14px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: 0 2px 10px rgba(15, 23, 42, 0.15);
+  }
+  .header-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+  }
+  .header-title {
+    font-size: 17px;
+    font-weight: 700;
+    margin: 0;
+  }
+  .header-sub {
+    font-size: 11.5px;
+    opacity: 0.85;
+    margin-top: 2px;
+  }
+  .btn-guide {
+    background: rgba(255,255,255,0.18);
+    border: 1px solid rgba(255,255,255,0.3);
+    color: #fff;
+    font-size: 12px;
+    font-weight: 600;
+    padding: 6px 10px;
+    border-radius: 8px;
+    cursor: pointer;
+  }
+  /* Date Selector Row */
+  .date-nav {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(255,255,255,0.12);
+    padding: 6px;
+    border-radius: 12px;
+  }
+  .nav-arrow {
+    background: rgba(255,255,255,0.2);
+    border: none;
+    color: #fff;
+    width: 36px;
+    height: 36px;
+    border-radius: 9px;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    flex-shrink: 0;
+  }
+  .nav-arrow:disabled {
+    opacity: 0.35;
+    cursor: not-allowed;
+  }
+  .date-select {
+    flex: 1;
+    height: 36px;
+    border-radius: 9px;
+    border: none;
+    padding: 0 10px;
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--primary);
+    background: #fff;
+    text-align: center;
+  }
+  .btn-calendar {
+    background: #fff;
+    color: var(--primary);
+    border: none;
+    height: 36px;
+    padding: 0 10px;
+    border-radius: 9px;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+    flex-shrink: 0;
+  }
+  /* Phase & Progress Card */
+  .status-card {
+    background: var(--card);
+    margin: 12px 14px;
+    padding: 14px 16px;
+    border-radius: 14px;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.05);
+  }
+  .phase-badge {
+    display: inline-block;
+    background: var(--accent-bg);
+    color: var(--accent);
+    font-size: 11.5px;
+    font-weight: 700;
+    padding: 3px 8px;
+    border-radius: 6px;
+    margin-bottom: 6px;
+  }
+  .phase-desc {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--primary);
+    margin-bottom: 10px;
+  }
+  .progress-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 12.5px;
+    color: var(--muted);
+    margin-bottom: 6px;
+  }
+  .progress-count {
+    font-weight: 700;
+    color: var(--primary);
+  }
+  .progress-bar-bg {
+    width: 100%;
+    height: 9px;
+    background: #E2E8F0;
+    border-radius: 99px;
+    overflow: hidden;
+  }
+  .progress-bar-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--accent), var(--success));
+    width: 0%;
+    transition: width 0.25s ease;
+  }
+  /* Task List */
+  .task-list {
+    padding: 0 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 9px;
+  }
+  .task-item {
+    background: var(--card);
+    border: 1.5px solid var(--border);
+    border-radius: 13px;
+    padding: 12px 14px;
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    user-select: none;
+  }
+  .task-item:active {
+    transform: scale(0.99);
+  }
+  .task-item.work-item {
+    border-left: 4px solid var(--accent);
+  }
+  .task-item.done {
+    background: var(--success-bg);
+    border-color: #A7F3D0;
+  }
+  .checkbox-box {
+    width: 24px;
+    height: 24px;
+    border-radius: 7px;
+    border: 2px solid #94A3B8;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    margin-top: 2px;
+    background: #fff;
+    transition: all 0.15s ease;
+  }
+  .task-item.done .checkbox-box {
+    background: var(--success);
+    border-color: var(--success);
+  }
+  .checkbox-box svg {
+    width: 15px;
+    height: 15px;
+    stroke: #fff;
+    stroke-width: 3;
+    fill: none;
+    opacity: 0;
+  }
+  .task-item.done .checkbox-box svg {
+    opacity: 1;
+  }
+  .task-content {
+    flex: 1;
+  }
+  .task-meta {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-bottom: 4px;
+    flex-wrap: wrap;
+  }
+  .task-time {
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--primary);
+  }
+  .task-tag {
+    font-size: 10.5px;
+    font-weight: 700;
+    padding: 1px 6px;
+    border-radius: 5px;
+    background: #F1F5F9;
+    color: #475569;
+  }
+  .work-item .task-tag {
+    background: var(--accent-bg);
+    color: var(--accent);
+  }
+  .task-title {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--text);
+  }
+  .task-item.done .task-title {
+    text-decoration: line-through;
+    color: var(--muted);
+  }
+  /* Daily Memo */
+  .memo-card {
+    background: var(--card);
+    margin: 14px 14px 0;
+    padding: 14px;
+    border-radius: 14px;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.05);
+  }
+  .memo-label {
+    font-size: 12.5px;
+    font-weight: 700;
+    color: var(--primary);
+    margin-bottom: 6px;
+    display: block;
+  }
+  .memo-input {
+    width: 100%;
+    border: 1px solid var(--border);
+    border-radius: 9px;
+    padding: 10px;
+    font-size: 13.5px;
+    font-family: inherit;
+    resize: vertical;
+    min-height: 60px;
+  }
+  .memo-input:focus {
+    outline: none;
+    border-color: var(--accent);
+  }
+  /* Modals */
+  .modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(15, 23, 42, 0.55);
+    display: none;
+    align-items: flex-end;
+    justify-content: center;
+    z-index: 200;
+  }
+  .modal-overlay.open {
+    display: flex;
+  }
+  .modal-sheet {
+    background: #fff;
+    width: 100%;
+    max-width: 540px;
+    max-height: 82vh;
+    border-radius: 20px 20px 0 0;
+    padding: 18px 16px 24px;
+    overflow-y: auto;
+  }
+  .modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid var(--border);
+  }
+  .modal-title {
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--primary);
+  }
+  .modal-close {
+    background: #F1F5F9;
+    border: none;
+    border-radius: 8px;
+    padding: 6px 12px;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+  }
+  .day-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 7px;
+  }
+  .day-cell {
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 8px 4px;
+    text-align: center;
+    cursor: pointer;
+    background: #fff;
+  }
+  .day-cell.active {
+    border: 2px solid var(--accent);
+    background: var(--accent-bg);
+  }
+  .day-cell.completed {
+    background: var(--success-bg);
+    border-color: var(--success);
+  }
+  .day-cell-num {
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--primary);
+  }
+  .day-cell-date {
+    font-size: 10.5px;
+    color: var(--muted);
+    margin-top: 2px;
+  }
+  .day-cell-stat {
+    font-size: 10px;
+    font-weight: 700;
+    color: var(--success);
+    margin-top: 2px;
+  }
+  .guide-section {
+    margin-bottom: 14px;
+    font-size: 13px;
+  }
+  .guide-section h4 {
+    margin: 0 0 6px;
+    color: var(--primary);
+    font-size: 14px;
+  }
+  .guide-section ul {
+    margin: 0;
+    padding-left: 18px;
+  }
+  .guide-section li {
+    margin-bottom: 4px;
+  }
+  .footer-note {
+    text-align: center;
+    font-size: 11px;
+    color: var(--muted);
+    margin-top: 18px;
+    padding: 0 16px;
+  }
+</style>
+</head>
+<body>
+<div class="app-container">
+  <header class="header">
+    <div class="header-top">
+      <div>
+        <h1 class="header-title">3개월 건강·학습 실천 플래너</h1>
+        <div class="header-sub">기상 30분 후 재택근무 · 모바일 체크리스트</div>
+      </div>
+      <button class="btn-guide" onclick="openModal('guideModal')">📌 수칙·가이드</button>
+    </div>
+    <div class="date-nav">
+      <button class="nav-arrow" id="prevBtn" onclick="changeDay(-1)">◀</button>
+      <select class="date-select" id="daySelect" onchange="selectDay(Number(this.value))"></select>
+      <button class="btn-calendar" onclick="openModal('gridModal')">전체 날짜</button>
+      <button class="nav-arrow" id="nextBtn" onclick="changeDay(1)">▶</button>
+    </div>
+  </header>
+
+  <section class="status-card">
+    <div class="phase-badge" id="phaseShort"></div>
+    <div class="phase-desc" id="phaseDesc"></div>
+    <div class="progress-row">
+      <span>오늘 일정 달성도</span>
+      <span class="progress-count" id="progressText">0 / 10 (0%)</span>
+    </div>
+    <div class="progress-bar-bg">
+      <div class="progress-bar-fill" id="progressBar"></div>
+    </div>
+  </section>
+
+  <main class="task-list" id="taskList"></main>
+
+  <section class="memo-card">
+    <label class="memo-label" for="dailyMemo">📝 오늘의 컨디션 / 한 줄 메모 (자동 저장)</label>
+    <textarea class="memo-input" id="dailyMemo" placeholder="오늘 눈·목·무릎 상태나 공부 소감을 간단히 기록해보세요." oninput="saveMemo()"></textarea>
+  </section>
+
+  <div class="footer-note">
+    체크한 내역과 메모는 현재 스마트폰 브라우저에 자동 저장됩니다.<br>
+    (같은 브라우저 앱으로 다시 열면 체크 표시가 유지됩니다)
+  </div>
+</div>
+
+<!-- 전체 날짜 선택 모달 -->
+<div class="modal-overlay" id="gridModal" onclick="closeModalOnBg(event, 'gridModal')">
+  <div class="modal-sheet">
+    <div class="modal-header">
+      <div class="modal-title">📅 90일 전체 날짜 선택</div>
+      <button class="modal-close" onclick="closeModal('gridModal')">닫기</button>
+    </div>
+    <div class="day-grid" id="dayGrid"></div>
+  </div>
+</div>
+
+<!-- 가이드 모달 -->
+<div class="modal-overlay" id="guideModal" onclick="closeModalOnBg(event, 'guideModal')">
+  <div class="modal-sheet">
+    <div class="modal-header">
+      <div class="modal-title">📌 3개월 건강 · 학습 핵심 수칙</div>
+      <button class="modal-close" onclick="closeModal('guideModal')">닫기</button>
+    </div>
+    <div class="guide-section">
+      <h4>🩺 눈 · 목 · 무릎 보호 수칙</h4>
+      <ul>
+        <li><b>안구건조증:</b> 기상 직후 무방부제 인공눈물 1방울, 모니터 50분마다 20초 먼 곳 응시, 취침 전 온열 안대.</li>
+        <li><b>목·어깨 뭉침:</b> 1시간 업무 직후 의자에서 일어나 기지개 10초 + 어깨 뒤로 돌리기 10회 + 턱 당기기.</li>
+        <li><b>무릎 쓸개골 보호:</b> 쪼그려 앉기·양반다리·계단 뛰기 금지. 쿠션화 착용 후 평지 걷기와 의자 다리 뻗기만 수행.</li>
+        <li><b>다크써클 & 체중(167cm/73kg):</b> 취침 4시간 전 금식, 외식 시 면·국물 대신 단백질 위주 식사.</li>
+      </ul>
+    </div>
+    <div class="guide-section">
+      <h4>📚 4과목 초소형 누적 학습법</h4>
+      <ul>
+        <li><b>영어:</b> 1개월(기초 단어 5개) → 2~3개월(짧은 영상·뉴스 쉐도잉)</li>
+        <li><b>일본어:</b> 1개월(히라가나·가타카나 & 인사말) → 2~3개월(기초 문법 & 회화 듣기)</li>
+        <li><b>한자:</b> 1개월(부수 및 생활 한자 3자 쓰기) → 2~3개월(6~5급 기출 어휘)</li>
+        <li><b>한국사:</b> 1개월(10분 요약 영상으로 흐름 잡기) → 2~3개월(한능검 기본 강의 1강씩)</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<script>
+const DAYS_DATA = [{"day": 1, "iso": "2026-11-19", "dateLabel": "11월 19일 (목)", "year": 2026, "month": 11, "dayOfMonth": 19, "weekday": "목", "phaseShort": "1개월 차 (1~2주)", "phaseDesc": "침대 탈출 & 수면 30분 당기기", "tasks": [{"time": "오후 01:30", "tag": "기상·눈", "title": "기상 직후 인공눈물 1방울 + 물 1컵 + 침대 탈출"}, {"time": "오후 02:00 ~ 오후 03:00", "tag": "업무 1차", "title": "재택근무 1차 (1시간 집중 업무)"}, {"time": "오후 03:00 ~ 오후 03:20", "tag": "스트레칭·공부", "title": "목·어깨 5분 스트레칭 + [15분 공부] 한국사: 10~15분 시대별 요약 영상 1편 시청"}, {"time": "오후 04:00 ~ 오후 05:30", "tag": "식사·걷기", "title": "첫 끼 식사(단백질 반찬) & 실내 제자리 걷기 10분"}, {"time": "오후 07:00 ~ 오후 08:00", "tag": "업무 2차", "title": "재택근무 2차 (1시간 집중 & 중간에 먼 곳 보며 눈 휴식)"}, {"time": "오후 08:00 ~ 오후 08:15", "tag": "목·눈 케어", "title": "어깨 돌리기 10회 + 턱 당기기 5분 & 인공눈물 점안"}, {"time": "오후 09:00 ~ 오후 10:30", "tag": "저녁·무릎", "title": "저녁 식사 & 의자에 앉아 다리 뻗어 5초 버티기(좌우 10회)"}, {"time": "자정 12:00 ~ 새벽 01:00", "tag": "업무 3차", "title": "재택근무 3차 (1시간 집중 업무 & 오늘 업무 마감)"}, {"time": "새벽 01:00 ~ 새벽 04:50", "tag": "휴식·금식", "title": "따뜻한 물 샤워 및 자유 휴식 (야식 금지, 물 마시기)"}, {"time": "새벽 04:50 ~ 새벽 05:30", "tag": "취침 준비", "title": "온열 눈 찜질 5~10분 → 스마트폰 멀리 두고 소등 후 취침"}]}, {"day": 2, "iso": "2026-11-20", "dateLabel": "11월 20일 (금)", "year": 2026, "month": 11, "dayOfMonth": 20, "weekday": "금", "phaseShort": "1개월 차 (1~2주)", "phaseDesc": "침대 탈출 & 수면 30분 당기기", "tasks": [{"time": "오후 01:30", "tag": "기상·눈", "title": "기상 직후 인공눈물 1방울 + 물 1컵 + 침대 탈출"}, {"time": "오후 02:00 ~ 오후 03:00", "tag": "업무 1차", "title": "재택근무 1차 (1시간 집중 업무)"}, {"time": "오후 03:00 ~ 오후 03:20", "tag": "스트레칭·공부", "title": "목·어깨 5분 스트레칭 + [15분 공부] 영어: 주간 학습 단어 복습 & 짧은 예문 읽기"}, {"time": "오후 04:00 ~ 오후 05:30", "tag": "식사·걷기", "title": "첫 끼 식사(단백질 반찬) & 실내 제자리 걷기 10분"}, {"time": "오후 07:00 ~ 오후 08:00", "tag": "업무 2차", "title": "재택근무 2차 (1시간 집중 & 중간에 먼 곳 보며 눈 휴식)"}, {"time": "오후 08:00 ~ 오후 08:15", "tag": "목·눈 케어", "title": "어깨 돌리기 10회 + 턱 당기기 5분 & 인공눈물 점안"}, {"time": "오후 09:00 ~ 오후 10:30", "tag": "저녁·무릎", "title": "저녁 식사 & 의자에 앉아 다리 뻗어 5초 버티기(좌우 10회)"}, {"time": "자정 12:00 ~ 새벽 01:00", "tag": "업무 3차", "title": "재택근무 3차 (1시간 집중 업무 & 오늘 업무 마감)"}, {"time": "새벽 01:00 ~ 새벽 04:50", "tag": "휴식·금식", "title": "따뜻한 물 샤워 및 자유 휴식 (야식 금지, 물 마시기)"}, {"time": "새벽 04:50 ~ 새벽 05:30", "tag": "취침 준비", "title": "온열 눈 찜질 5~10분 → 스마트폰 멀리 두고 소등 후 취침"}]}, {"day": 3, "iso": "2026-11-21", "dateLabel": "11월 21일 (토)", "year": 2026, "month": 11, "dayOfMonth": 21, "weekday": "토", "phaseShort": "1개월 차 (1~2주)", "phaseDesc": "침대 탈출 & 수면 30분 당기기", "tasks": [{"time": "오후 01:30", "tag": "기상·눈", "title": "기상 직후 인공눈물 1방울 + 물 1컵 + 침대 탈출"}, {"time": "오후 02:00 ~ 오후 03:00", "tag": "업무 1차", "title": "재택근무 1차 (1시간 집중 업무)"}, {"time": "오후 03:00 ~ 오후 03:20", "tag": "스트레칭·공부", "title": "목·어깨 5분 스트레칭 + [15분 공부] 일본어·한자: 주중 배운 글자 10분 가볍게 복습"}, {"time": "오후 04:00 ~ 오후 05:30", "tag": "식사·걷기", "title": "첫 끼 식사(단백질 반찬) & 실내 제자리 걷기 10분"}, {"time": "오후 07:00 ~ 오후 08:00", "tag": "업무 2차", "title": "재택근무 2차 (1시간 집중 & 중간에 먼 곳 보며 눈 휴식)"}, {"time": "오후 08:00 ~ 오후 08:15", "tag": "목·눈 케어", "title": "어깨 돌리기 10회 + 턱 당기기 5분 & 인공눈물 점안"}, {"time": "오후 09:00 ~ 오후 10:30", "tag": "저녁·무릎", "title": "저녁 식사 & 의자에 앉아 다리 뻗어 5초 버티기(좌우 10회)"}, {"time": "자정 12:00 ~ 새벽 01:00", "tag": "업무 3차", "title": "재택근무 3차 (1시간 집중 업무 & 오늘 업무 마감)"}, {"time": "새벽 01:00 ~ 새벽 04:50", "tag": "휴식·금식", "title": "따뜻한 물 샤워 및 자유 휴식 (야식 금지, 물 마시기)"}, {"time": "새벽 04:50 ~ 새벽 05:30", "tag": "취침 준비", "title": "온열 눈 찜질 5~10분 → 스마트폰 멀리 두고 소등 후 취침"}]}, {"day": 4, "iso": "2026-11-22", "dateLabel": "11월 22일 (일)", "year": 2026, "month": 11, "dayOfMonth": 22, "weekday": "일", "phaseShort": "1개월 차 (1~2주)", "phaseDesc": "침대 탈출 & 수면 30분 당기기", "tasks": [{"time": "오후 01:30", "tag": "기상·눈", "title": "기상 직후 인공눈물 1방울 + 물 1컵 + 침대 탈출"}, {"time": "오후 02:00 ~ 오후 03:00", "tag": "업무 1차", "title": "재택근무 1차 (1시간 집중 업무)"}, {"time": "오후 03:00 ~ 오후 03:20", "tag": "스트레칭·공부", "title": "목·어깨 5분 스트레칭 + [15분 공부] 한국사·자유: 흥미로운 역사 다큐/영상 15분 보기"}, {"time": "오후 04:00 ~ 오후 05:30", "tag": "식사·걷기", "title": "첫 끼 식사(단백질 반찬) & 실내 제자리 걷기 10분"}, {"time": "오후 07:00 ~ 오후 08:00", "tag": "업무 2차", "title": "재택근무 2차 (1시간 집중 & 중간에 먼 곳 보며 눈 휴식)"}, {"time": "오후 08:00 ~ 오후 08:15", "tag": "목·눈 케어", "title": "어깨 돌리기 10회 + 턱 당기기 5분 & 인공눈물 점안"}, {"time": "오후 09:00 ~ 오후 10:30", "tag": "저녁·무릎", "title": "저녁 식사 & 의자에 앉아 다리 뻗어 5초 버티기(좌우 10회)"}, {"time": "자정 12:00 ~ 새벽 01:00", "tag": "업무 3차", "title": "재택근무 3차 (1시간 집중 업무 & 오늘 업무 마감)"}, {"time": "새벽 01:00 ~ 새벽 04:50", "tag": "휴식·금식", "title": "따뜻한 물 샤워 및 자유 휴식 (야식 금지, 물 마시기)"}, {"time": "새벽 04:50 ~ 새벽 05:30", "tag": "취침 준비", "title": "온열 눈 찜질 5~10분 → 스마트폰 멀리 두고 소등 후 취침"}]}, {"day": 5, "iso": "2026-11-23", "dateLabel": "11월 23일 (월)", "year": 2026, "month": 11, "dayOfMonth": 23, "weekday": "월", "phaseShort": "1개월 차 (1~2주)", "phaseDesc": "침대 탈출 & 수면 30분 당기기", "tasks": [{"time": "오후 01:30", "tag": "기상·눈", "title": "기상 직후 인공눈물 1방울 + 물 1컵 + 침대 탈출"}, {"time": "오후 02:00 ~ 오후 03:00", "tag": "업무 1차", "title": "재택근무 1차 (1시간 집중 업무)"}, {"time": "오후 03:00 ~ 오후 03:20", "tag": "스트레칭·공부", "title": "목·어깨 5분 스트레칭 + [15분 공부] 영어: 기초 단어 5개 뜻·발음 익히기"}, {"time": "오후 04:00 ~ 오후 05:30", "tag": "식사·걷기", "title": "첫 끼 식사(단백질 반찬) & 실내 제자리 걷기 10분"}, {"time": "오후 07:00 ~ 오후 08:00", "tag": "업무 2차", "title": "재택근무 2차 (1시간 집중 & 중간에 먼 곳 보며 눈 휴식)"}, {"time": "오후 08:00 ~ 오후 08:15", "tag": "목·눈 케어", "title": "어깨 돌리기 10회 + 턱 당기기 5분 & 인공눈물 점안"}, {"time": "오후 09:00 ~ 오후 10:30", "tag": "저녁·무릎", "title": "저녁 식사 & 의자에 앉아 다리 뻗어 5초 버티기(좌우 10회)"}, {"time": "자정 12:00 ~ 새벽 01:00", "tag": "업무 3차", "title": "재택근무 3차 (1시간 집중 업무 & 오늘 업무 마감)"}, {"time": "새벽 01:00 ~ 새벽 04:50", "tag": "휴식·금식", "title": "따뜻한 물 샤워 및 자유 휴식 (야식 금지, 물 마시기)"}, {"time": "새벽 04:50 ~ 새벽 05:30", "tag": "취침 준비", "title": "온열 눈 찜질 5~10분 → 스마트폰 멀리 두고 소등 후 취침"}]}, {"day": 6, "iso": "2026-11-24", "dateLabel": "11월 24일 (화)", "year": 2026, "month": 11, "dayOfMonth": 24, "weekday": "화", "phaseShort": "1개월 차 (1~2주)", "phaseDesc": "침대 탈출 & 수면 30분 당기기", "tasks": [{"time": "오후 01:30", "tag": "기상·눈", "title": "기상 직후 인공눈물 1방울 + 물 1컵 + 침대 탈출"}, {"time": "오후 02:00 ~ 오후 03:00", "tag": "업무 1차", "title": "재택근무 1차 (1시간 집중 업무)"}, {"time": "오후 03:00 ~ 오후 03:20", "tag": "스트레칭·공부", "title": "목·어깨 5분 스트레칭 + [15분 공부] 일본어: 히라가나/가타카나 10자 & 인사말 3문장"}, {"time": "오후 04:00 ~ 오후 05:30", "tag": "식사·걷기", "title": "첫 끼 식사(단백질 반찬) & 실내 제자리 걷기 10분"}, {"time": "오후 07:00 ~ 오후 08:00", "tag": "업무 2차", "title": "재택근무 2차 (1시간 집중 & 중간에 먼 곳 보며 눈 휴식)"}, {"time": "오후 08:00 ~ 오후 08:15", "tag": "목·눈 케어", "title": "어깨 돌리기 10회 + 턱 당기기 5분 & 인공눈물 점안"}, {"time": "오후 09:00 ~ 오후 10:30", "tag": "저녁·무릎", "title": "저녁 식사 & 의자에 앉아 다리 뻗어 5초 버티기(좌우 10회)"}, {"time": "자정 12:00 ~ 새벽 01:00", "tag": "업무 3차", "title": "재택근무 3차 (1시간 집중 업무 & 오늘 업무 마감)"}, {"time": "새벽 01:00 ~ 새벽 04:50", "tag": "휴식·금식", "title": "따뜻한 물 샤워 및 자유 휴식 (야식 금지, 물 마시기)"}, {"time": "새벽 04:50 ~ 새벽 05:30", "tag": "취침 준비", "title": "온열 눈 찜질 5~10분 → 스마트폰 멀리 두고 소등 후 취침"}]}, {"day": 7, "iso": "2026-11-25", "dateLabel": "11월 25일 (수)", "year": 2026, "month": 11, "dayOfMonth": 25, "weekday": "수", "phaseShort": "1개월 차 (1~2주)", "phaseDesc": "침대 탈출 & 수면 30분 당기기", "tasks": [{"time": "오후 01:30", "tag": "기상·눈", "title": "기상 직후 인공눈물 1방울 + 물 1컵 + 침대 탈출"}, {"time": "오후 02:00 ~ 오후 03:00", "tag": "업무 1차", "title": "재택근무 1차 (1시간 집중 업무)"}, {"time": "오후 03:00 ~ 오후 03:20", "tag": "스트레칭·공부", "title": "목·어깨 5분 스트레칭 + [15분 공부] 한자: 기초 부수 및 생활 한자 3글자 쓰기"}, {"time": "오후 04:00 ~ 오후 05:30", "tag": "식사·걷기", "title": "첫 끼 식사(단백질 반찬) & 실내 제자리 걷기 10분"}, {"time": "오후 07:00 ~ 오후 08:00", "tag": "업무 2차", "title": "재택근무 2차 (1시간 집중 & 중간에 먼 곳 보며 눈 휴식)"}, {"time": "오후 08:00 ~ 오후 08:15", "tag": "목·눈 케어", "title": "어깨 돌리기 10회 + 턱 당기기 5분 & 인공눈물 점안"}, {"time": "오후 09:00 ~ 오후 10:30", "tag": "저녁·무릎", "title": "저녁 식사 & 의자에 앉아 다리 뻗어 5초 버티기(좌우 10회)"}, {"time": "자정 12:00 ~ 새벽 01:00", "tag": "업무 3차", "title": "재택근무 3차 (1시간 집중 업무 & 오늘 업무 마감)"}, {"time": "새벽 01:00 ~ 새벽 04:50", "tag": "휴식·금식", "title": "따뜻한 물 샤워 및 자유 휴식 (야식 금지, 물 마시기)"}, {"time": "새벽 04:50 ~ 새벽 05:30", "tag": "취침 준비", "title": "온열 눈 찜질 5~10분 → 스마트폰 멀리 두고 소등 후 취침"}]}, {"day": 8, "iso": "2026-11-26", "dateLabel": "11월 26일 (목)", "year": 2026, "month": 11, "dayOfMonth": 26, "weekday": "목", "phaseShort": "1개월 차 (1~2주)", "phaseDesc": "침대 탈출 & 수면 30분 당기기", "tasks": [{"time": "오후 01:30", "tag": "기상·눈", "title": "기상 직후 인공눈물 1방울 + 물 1컵 + 침대 탈출"}, {"time": "오후 02:00 ~ 오후 03:00", "tag": "업무 1차", "title": "재택근무 1차 (1시간 집중 업무)"}, {"time": "오후 03:00 ~ 오후 03:20", "tag": "스트레칭·공부", "title": "목·어깨 5분 스트레칭 + [15분 공부] 한국사: 10~15분 시대별 요약 영상 1편 시청"}, {"time": "오후 04:00 ~ 오후 05:30", "tag": "식사·걷기", "title": "첫 끼 식사(단백질 반찬) & 실내 제자리 걷기 10분"}, {"time": "오후 07:00 ~ 오후 08:00", "tag": "업무 2차", "title": "재택근무 2차 (1시간 집중 & 중간에 먼 곳 보며 눈 휴식)"}, {"time": "오후 08:00 ~ 오후 08:15", "tag": "목·눈 케어", "title": "어깨 돌리기 10회 + 턱 당기기 5분 & 인공눈물 점안"}, {"time": "오후 09:00 ~ 오후 10:30", "tag": "저녁·무릎", "title": "저녁 식사 & 의자에 앉아 다리 뻗어 5초 버티기(좌우 10회)"}, {"time": "자정 12:00 ~ 새벽 01:00", "tag": "업무 3차", "title": "재택근무 3차 (1시간 집중 업무 & 오늘 업무 마감)"}, {"time": "새벽 01:00 ~ 새벽 04:50", "tag": "휴식·금식", "title": "따뜻한 물 샤워 및 자유 휴식 (야식 금지, 물 마시기)"}, {"time": "새벽 04:50 ~ 새벽 05:30", "tag": "취침 준비", "title": "온열 눈 찜질 5~10분 → 스마트폰 멀리 두고 소등 후 취침"}]}, {"day": 9, "iso": "2026-11-27", "dateLabel": "11월 27일 (금)", "year": 2026, "month": 11, "dayOfMonth": 27, "weekday": "금", "phaseShort": "1개월 차 (1~2주)", "phaseDesc": "침대 탈출 & 수면 30분 당기기", "tasks": [{"time": "오후 01:30", "tag": "기상·눈", "title": "기상 직후 인공눈물 1방울 + 물 1컵 + 침대 탈출"}, {"time": "오후 02:00 ~ 오후 03:00", "tag": "업무 1차", "title": "재택근무 1차 (1시간 집중 업무)"}, {"time": "오후 03:00 ~ 오후 03:20", "tag": "스트레칭·공부", "title": "목·어깨 5분 스트레칭 + [15분 공부] 영어: 주간 학습 단어 복습 & 짧은 예문 읽기"}, {"time": "오후 04:00 ~ 오후 05:30", "tag": "식사·걷기", "title": "첫 끼 식사(단백질 반찬) & 실내 제자리 걷기 10분"}, {"time": "오후 07:00 ~ 오후 08:00", "tag": "업무 2차", "title": "재택근무 2차 (1시간 집중 & 중간에 먼 곳 보며 눈 휴식)"}, {"time": "오후 08:00 ~ 오후 08:15", "tag": "목·눈 케어", "title": "어깨 돌리기 10회 + 턱 당기기 5분 & 인공눈물 점안"}, {"time": "오후 09:00 ~ 오후 10:30", "tag": "저녁·무릎", "title": "저녁 식사 & 의자에 앉아 다리 뻗어 5초 버티기(좌우 10회)"}, {"time": "자정 12:00 ~ 새벽 01:00", "tag": "업무 3차", "title": "재택근무 3차 (1시간 집중 업무 & 오늘 업무 마감)"}, {"time": "새벽 01:00 ~ 새벽 04:50", "tag": "휴식·금식", "title": "따뜻한 물 샤워 및 자유 휴식 (야식 금지, 물 마시기)"}, {"time": "새벽 04:50 ~ 새벽 05:30", "tag": "취침 준비", "title": "온열 눈 찜질 5~10분 → 스마트폰 멀리 두고 소등 후 취침"}]}, {"day": 10, "iso": "2026-11-28", "dateLabel": "11월 28일 (토)", "year": 2026, "month": 11, "dayOfMonth": 28, "weekday": "토", "phaseShort": "1개월 차 (1~2주)", "phaseDesc": "침대 탈출 & 수면 30분 당기기", "tasks": [{"time": "오후 01:30", "tag": "기상·눈", "title": "기상 직후 인공눈물 1방울 + 물 1컵 + 침대 탈출"}, {"time": "오후 02:00 ~ 오후 03:00", "tag": "업무 1차", "title": "재택근무 1차 (1시간 집중 업무)"}, {"time": "오후 03:00 ~ 오후 03:20", "tag": "스트레칭·공부", "title": "목·어깨 5분 스트레칭 + [15분 공부] 일본어·한자: 주중 배운 글자 10분 가볍게 복습"}, {"time": "오후 04:00 ~ 오후 05:30", "tag": "식사·걷기", "title": "첫 끼 식사(단백질 반찬) & 실내 제자리 걷기 10분"}, {"time": "오후 07:00 ~ 오후 08:00", "tag": "업무 2차", "title": "재택근무 2차 (1시간 집중 & 중간에 먼 곳 보며 눈 휴식)"}, {"time": "오후 08:00 ~ 오후 08:15", "tag": "목·눈 케어", "title": "어깨 돌리기 10회 + 턱 당기기 5분 & 인공눈물 점안"}, {"time": "오후 09:00 ~ 오후 10:30", "tag": "저녁·무릎", "title": "저녁 식사 & 의자에 앉아 다리 뻗어 5초 버티기(좌우 10회)"}, {"time": "자정 12:00 ~ 새벽 01:00", "tag": "업무 3차", "title": "재택근무 3차 (1시간 집중 업무 & 오늘 업무 마감)"}, {"time": "새벽 01:00 ~ 새벽 04:50", "tag": "휴식·금식", "title": "따뜻한 물 샤워 및 자유 휴식 (야식 금지, 물 마시기)"}, {"time": "새벽 04:50 ~ 새벽 05:30", "tag": "취침 준비", "title": "온열 눈 찜질 5~10분 → 스마트폰 멀리 두고 소등 후 취침"}]}, {"day": 11, "iso": "2026-11-29", "dateLabel": "11월 29일 (일)", "year": 2026, "month": 11, "dayOfMonth": 29, "weekday": "일", "phaseShort": "1개월 차 (1~2주)", "phaseDesc": "침대 탈출 & 수면 30분 당기기", "tasks": [{"time": "오후 01:30", "tag": "기상·눈", "title": "기상 직후 인공눈물 1방울 + 물 1컵 + 침대 탈출"}, {"time": "오후 02:00 ~ 오후 03:00", "tag": "업무 1차", "title": "재택근무 1차 (1시간 집중 업무)"}, {"time": "오후 03:00 ~ 오후 03:20", "tag": "스트레칭·공부", "title": "목·어깨 5분 스트레칭 + [15분 공부] 한국사·자유: 흥미로운 역사 다큐/영상 15분 보기"}, {"time": "오후 04:00 ~ 오후 05:30", "tag": "식사·걷기", "title": "첫 끼 식사(단백질 반찬) & 실내 제자리 걷기 10분"}, {"time": "오후 07:00 ~ 오후 08:00", "tag": "업무 2차", "title": "재택근무 2차 (1시간 집중 & 중간에 먼 곳 보며 눈 휴식)"}, {"time": "오후 08:00 ~ 오후 08:15", "tag": "목·눈 케어", "title": "어깨 돌리기 10회 + 턱 당기기 5분 & 인공눈물 점안"}, {"time": "오후 09:00 ~ 오후 10:30", "tag": "저녁·무릎", "title": "저녁 식사 & 의자에 앉아 다리 뻗어 5초 버티기(좌우 10회)"}, {"time": "자정 12:00 ~ 새벽 01:00", "tag": "업무 3차", "title": "재택근무 3차 (1시간 집중 업무 & 오늘 업무 마감)"}, {"time": "새벽 01:00 ~ 새벽 04:50", "tag": "휴식·금식", "title": "따뜻한 물 샤워 및 자유 휴식 (야식 금지, 물 마시기)"}, {"time": "새벽 04:50 ~ 새벽 05:30", "tag": "취침 준비", "title": "온열 눈 찜질 5~10분 → 스마트폰 멀리 두고 소등 후 취침"}]}, {"day": 12, "iso": "2026-11-30", "dateLabel": "11월 30일 (월)", "year": 2026, "month": 11, "dayOfMonth": 30, "weekday": "월", "phaseShort": "1개월 차 (1~2주)", "phaseDesc": "침대 탈출 & 수면 30분 당기기", "tasks": [{"time": "오후 01:30", "tag": "기상·눈", "title": "기상 직후 인공눈물 1방울 + 물 1컵 + 침대 탈출"}, {"time": "오후 02:00 ~ 오후 03:00", "tag": "업무 1차", "title": "재택근무 1차 (1시간 집중 업무)"}, {"time": "오후 03:00 ~ 오후 03:20", "tag": "스트레칭·공부", "title": "목·어깨 5분 스트레칭 + [15분 공부] 영어: 기초 단어 5개 뜻·발음 익히기"}, {"time": "오후 04:00 ~ 오후 05:30", "tag": "식사·걷기", "title": "첫 끼 식사(단백질 반찬) & 실내 제자리 걷기 10분"}, {"time": "오후 07:00 ~ 오후 08:00", "tag": "업무 2차", "title": "재택근무 2차 (1시간 집중 & 중간에 먼 곳 보며 눈 휴식)"}, {"time": "오후 08:00 ~ 오후 08:15", "tag": "목·눈 케어", "title": "어깨 돌리기 10회 + 턱 당기기 5분 & 인공눈물 점안"}, {"time": "오후 09:00 ~ 오후 10:30", "tag": "저녁·무릎", "title": "저녁 식사 & 의자에 앉아 다리 뻗어 5초 버티기(좌우 10회)"}, {"time": "자정 12:00 ~ 새벽 01:00", "tag": "업무 3차", "title": "재택근무 3차 (1시간 집중 업무 & 오늘 업무 마감)"}, {"time": "새벽 01:00 ~ 새벽 04:50", "tag": "휴식·금식", "title": "따뜻한 물 샤워 및 자유 휴식 (야식 금지, 물 마시기)"}, {"time": "새벽 04:50 ~ 새벽 05:30", "tag": "취침 준비", "title": "온열 눈 찜질 5~10분 → 스마트폰 멀리 두고 소등 후 취침"}]}, {"day": 13, "iso": "2026-12-01", "dateLabel": "12월 1일 (화)", "year": 2026, "month": 12, "dayOfMonth": 1, "weekday": "화", "phaseShort": "1개월 차 (1~2주)", "phaseDesc": "침대 탈출 & 수면 30분 당기기", "tasks": [{"time": "오후 01:30", "tag": "기상·눈", "title": "기상 직후 인공눈물 1방울 + 물 1컵 + 침대 탈출"}, {"time": "오후 02:00 ~ 오후 03:00", "tag": "업무 1차", "title": "재택근무 1차 (1시간 집중 업무)"}, {"time": "오후 03:00 ~ 오후 03:20", "tag": "스트레칭·공부", "title": "목·어깨 5분 스트레칭 + [15분 공부] 일본어: 히라가나/가타카나 10자 & 인사말 3문장"}, {"time": "오후 04:00 ~ 오후 05:30", "tag": "식사·걷기", "title": "첫 끼 식사(단백질 반찬) & 실내 제자리 걷기 10분"}, {"time": "오후 07:00 ~ 오후 08:00", "tag": "업무 2차", "title": "재택근무 2차 (1시간 집중 & 중간에 먼 곳 보며 눈 휴식)"}, {"time": "오후 08:00 ~ 오후 08:15", "tag": "목·눈 케어", "title": "어깨 돌리기 10회 + 턱 당기기 5분 & 인공눈물 점안"}, {"time": "오후 09:00 ~ 오후 10:30", "tag": "저녁·무릎", "title": "저녁 식사 & 의자에 앉아 다리 뻗어 5초 버티기(좌우 10회)"}, {"time": "자정 12:00 ~ 새벽 01:00", "tag": "업무 3차", "title": "재택근무 3차 (1시간 집중 업무 & 오늘 업무 마감)"}, {"time": "새벽 01:00 ~ 새벽 04:50", "tag": "휴식·금식", "title": "따뜻한 물 샤워 및 자유 휴식 (야식 금지, 물 마시기)"}, {"time": "새벽 04:50 ~ 새벽 05:30", "tag": "취침 준비", "title": "온열 눈 찜질 5~10분 → 스마트폰 멀리 두고 소등 후 취침"}]}, {"day": 14, "iso": "2026-12-02", "dateLabel": "12월 2일 (수)", "year": 2026, "month": 12, "dayOfMonth": 2, "weekday": "수", "phaseShort": "1개월 차 (1~2주)", "phaseDesc": "침대 탈출 & 수면 30분 당기기", "tasks": [{"time": "오후 01:30", "tag": "기상·눈", "title": "기상 직후 인공눈물 1방울 + 물 1컵 + 침대 탈출"}, {"time": "오후 02:00 ~ 오후 03:00", "tag": "업무 1차", "title": "재택근무 1차 (1시간 집중 업무)"}, {"time": "오후 03:00 ~ 오후 03:20", "tag": "스트레칭·공부", "title": "목·어깨 5분 스트레칭 + [15분 공부] 한자: 기초 부수 및 생활 한자 3글자 쓰기"}, {"time": "오후 04:00 ~ 오후 05:30", "tag": "식사·걷기", "title": "첫 끼 식사(단백질 반찬) & 실내 제자리 걷기 10분"}, {"time": "오후 07:00 ~ 오후 08:00", "tag": "업무 2차", "title": "재택근무 2차 (1시간 집중 & 중간에 먼 곳 보며 눈 휴식)"}, {"time": "오후 08:00 ~ 오후 08:15", "tag": "목·눈 케어", "title": "어깨 돌리기 10회 + 턱 당기기 5분 & 인공눈물 점안"}, {"time": "오후 09:00 ~ 오후 10:30", "tag": "저녁·무릎", "title": "저녁 식사 & 의자에 앉아 다리 뻗어 5초 버티기(좌우 10회)"}, {"time": "자정 12:00 ~ 새벽 01:00", "tag": "업무 3차", "title": "재택근무 3차 (1시간 집중 업무 & 오늘 업무 마감)"}, {"time": "새벽 01:00 ~ 새벽 04:50", "tag": "휴식·금식", "title": "따뜻한 물 샤워 및 자유 휴식 (야식 금지, 물 마시기)"}, {"time": "새벽 04:50 ~ 새벽 05:30", "tag": "취침 준비", "title": "온열 눈 찜질 5~10분 → 스마트폰 멀리 두고 소등 후 취침"}]}, {"day": 15, "iso": "2026-12-03", "dateLabel": "12월 3일 (목)", "year": 2026, "month": 12, "dayOfMonth": 3, "weekday": "목", "phaseShort": "1개월 차 (3~4주)", "phaseDesc": "낮 12시 기상 & 실내 몸 깨우기", "tasks": [{"time": "오후 12:30", "tag": "기상·눈", "title": "기상 직후 인공눈물 1방울 + 물 1컵 + 침대 탈출"}, {"time": "오후 01:00 ~ 오후 02:00", "tag": "업무 1차", "title": "재택근무 1차 (1시간 집중 업무)"}, {"time": "오후 02:00 ~ 오후 02:20", "tag": "스트레칭·공부", "title": "목·어깨 5분 스트레칭 + [15분 공부] 한국사: 10~15분 시대별 요약 영상 1편 시청"}, {"time": "오후 03:00 ~ 오후 04:30", "tag": "식사·걷기", "title": "첫 끼 식사 & 실내 스트레칭 + 평지 가볍게 15분 걷기"}, {"time": "오후 06:00 ~ 오후 07:00", "tag": "업무 2차", "title": "재택근무 2차 (1시간 집중 & 중간에 먼 곳 보며 눈 휴식)"}, {"time": "오후 07:00 ~ 오후 07:15", "tag": "목·눈 케어", "title": "어깨 돌리기 10회 + 턱 당기기 5분 & 인공눈물 점안"}, {"time": "오후 08:00 ~ 오후 09:30", "tag": "저녁·무릎", "title": "저녁 식사 & 의자에 앉아 다리 뻗어 5초 버티기(좌우 10회)"}, {"time": "오후 11:00 ~ 자정 12:00", "tag": "업무 3차", "title": "재택근무 3차 (1시간 집중 업무 & 오늘 업무 마감)"}, {"time": "자정 12:00 ~ 새벽 03:50", "tag": "휴식·금식", "title": "따뜻한 물 샤워 및 자유 휴식 (야식 금지, 물 마시기)"}, {"time": "새벽 03:50 ~ 새벽 04:30", "tag": "취침 준비", "title": "온열 눈 찜질 5~10분 → 스마트폰 멀리 두고 소등 후 취침"}]}, {"day": 16, "iso": "2026-12-04", "dateLabel": "12월 4일 (금)", "year": 2026, "month": 12, "dayOfMonth": 4, "weekday": "금", "phaseShort": "1개월 차 (3~4주)", "phaseDesc": "낮 12시 기상 & 실내 몸 깨우기", "tasks": [{"time": "오후 12:30", "tag": "기상·눈", "title": "기상 직후 인공눈물 1방울 + 물 1컵 + 침대 탈출"}, {"time": "오후 01:00 ~ 오후 02:00", "tag": "업무 1차", "title": "재택근무 1차 (1시간 집중 업무)"}, {"time": "오후 02:00 ~ 오후 02:20", "tag": "스트레칭·공부", "title": "목·어깨 5분 스트레칭 + [15분 공부] 영어: 주간 학습 단어 복습 & 짧은 예문 읽기"}, {"time": "오후 03:00 ~ 오후 04:30", "tag": "식사·걷기", "title": "첫 끼 식사 & 실내 스트레칭 + 평지 가볍게 15분 걷기"}, {"time": "오후 06:00 ~ 오후 07:00", "tag": "업무 2차", "title": "재택근무 2차 (1시간 집중 & 중간에 먼 곳 보며 눈 휴식)"}, {"time": "오후 07:00 ~ 오후 07:15", "tag": "목·눈 케어", "title": "어깨 돌리기 10회 + 턱 당기기 5분 & 인공눈물 점안"}, {"time": "오후 08:00 ~ 오후 09:30", "tag": "저녁·무릎", "title": "저녁 식사 & 의자에 앉아 다리 뻗어 5초 버티기(좌우 10회)"}, {"time": "오후 11:00 ~ 자정 12:00", "tag": "업무 3차", "title": "재택근무 3차 (1시간 집중 업무 & 오늘 업무 마감)"}, {"time": "자정 12:00 ~ 새벽 03:50", "tag": "휴식·금식", "title": "따뜻한 물 샤워 및 자유 휴식 (야식 금지, 물 마시기)"}, {"time": "새벽 03:50 ~ 새벽 04:30", "tag": "취침 준비", "title": "온열 눈 찜질 5~10분 → 스마트폰 멀리 두고 소등 후 취침"}]}, {"day": 17, "iso": "2026-12-05", "dateLabel": "12월 5일 (토)", "year": 2026, "month": 12, "dayOfMonth": 5, "weekday": "토", "phaseShort": "1개월 차 (3~4주)", "phaseDesc": "낮 12시 기상 & 실내 몸 깨우기", "tasks": [{"time": "오후 12:30", "tag": "기상·눈", "title": "기상 직후 인공눈물 1방울 + 물 1컵 + 침대 탈출"}, {"time": "오후 01:00 ~ 오후 02:00", "tag": "업무 1차", "title": "재택근무 1차 (1시간 집중 업무)"}, {"time": "오후 02:00 ~ 오후 02:20", "tag": "스트레칭·공부", "title": "목·어깨 5분 스트레칭 + [15분 공부] 일본어·한자: 주중 배운 글자 10분 가볍게 복습"}, {"time": "오후 03:00 ~ 오후 04:30", "tag": "식사·걷기", "title": "첫 끼 식사 & 실내 스트레칭 + 평지 가볍게 15분 걷기"}, {"time": "오후 06:00 ~ 오후 07:00", "tag": "업무 2차", "title": "재택근무 2차 (1시간 집중 & 중간에 먼 곳 보며 눈 휴식)"}, {"time": "오후 07:00 ~ 오후 07:15", "tag": "목·눈 케어", "title": "어깨 돌리기 10회 + 턱 당기기 5분 & 인공눈물 점안"}, {"time": "오후 08:00 ~ 오후 09:30", "tag": "저녁·무릎", "title": "저녁 식사 & 의자에 앉아 다리 뻗어 5초 버티기(좌우 10회)"}, {"time": "오후 11:00 ~ 자정 12:00", "tag": "업무 3차", "title": "재택근무 3차 (1시간 집중 업무 & 오늘 업무 마감)"}, {"time": "자정 12:00 ~ 새벽 03:50", "tag": "휴식·금식", "title": "따뜻한 물 샤워 및 자유 휴식 (야식 금지, 물 마시기)"}, {"time": "새벽 03:50 ~ 새벽 04:30", "tag": "취침 준비", "title": "온열 눈 찜질 5~10분 → 스마트폰 멀리 두고 소등 후 취침"}]}, {"day": 18, "iso": "2026-12-06", "dateLabel": "12월 6일 (일)", "year": 2026, "month": 12, "dayOfMonth": 6, "weekday": "일", "phaseShort": "1개월 차 (3~4주)", "phaseDesc": "낮 12시 기상 & 실내 몸 깨우기", "tasks": [{"time": "오후 12:30", "tag": "기상·눈", "title": "기상 직후 인공눈물 1방울 + 물 1컵 + 침대 탈출"}, {"time": "오후 01:00 ~ 오후 02:00", "tag": "업무 1차", "title": "재택근무 1차 (1시간 집중 업무)"}, {"time": "오후 02:00 ~ 오후 02:20", "tag": "스트레칭·공부", "title": "목·어깨 5분 스트레칭 + [15분 공부] 한국사·자유: 흥미로운 역사 다큐/영상 15분 보기"}, {"time": "오후 03:00 ~ 오후 04:30", "tag": "식사·걷기", "title": "첫 끼 식사 & 실내 스트레칭 + 평지 가볍게 15분 걷기"}, {"time": "오후 06:00 ~ 오후 07:00", "tag": "업무 2차", "title": "재택근무 2차 (1시간 집중 & 중간에 먼 곳 보며 눈 휴식)"}, {"time": "오후 07:00 ~ 오후 07:15", "tag": "목·눈 케어", "title": "어깨 돌리기 10회 + 턱 당기기 5분 & 인공눈물 점안"}, {"time": "오후 08:00 ~ 오후 09:30", "tag": "저녁·무릎", "title": "저녁 식사 & 의자에 앉아 다리 뻗어 5초 버티기(좌우 10회)"}, {"time": "오후 11:00 ~ 자정 12:00", "tag": "업무 3차", "title": "재택근무 3차 (1시간 집중 업무 & 오늘 업무 마감)"}, {"time": "자정 12:00 ~ 새벽 03:50", "tag": "휴식·금식", "title": "따뜻한 물 샤워 및 자유 휴식 (야식 금지, 물 마시기)"}, {"time": "새벽 03:50 ~ 새벽 04:30", "tag": "취침 준비", "title": "온열 눈 찜질 5~10분 → 스마트폰 멀리 두고 소등 후 취침"}]}, {"day": 19, "iso": "2026-12-07", "dateLabel": "12월 7일 (월)", "year": 2026, "month": 12, "dayOfMonth": 7, "weekday": "월", "phaseShort": "1개월 차 (3~4주)", "phaseDesc": "낮 12시 기상 & 실내 몸 깨우기", "tasks": [{"time": "오후 12:30", "tag": "기상·눈", "title": "기상 직후 인공눈물 1방울 + 물 1컵 + 침대 탈출"}, {"time": "오후 01:00 ~ 오후 02:00", "tag": "업무 1차", "title": "재택근무 1차 (1시간 집중 업무)"}, {"time": "오후 02:00 ~ 오후 02:20", "tag": "스트레칭·공부", "title": "목·어깨 5분 스트레칭 + [15분 공부] 영어: 기초 단어 5개 뜻·발음 익히기"}, {"time": "오후 03:00 ~ 오후 04:30", "tag": "식사·걷기", "title": "첫 끼 식사 & 실내 스트레칭 + 평지 가볍게 15분 걷기"}, {"time": "오후 06:00 ~ 오후 07:00", "tag": "업무 2차", "title": "재택근무 2차 (1시간 집중 & 중간에 먼 곳 보며 눈 휴식)"}, {"time": "오후 07:00 ~ 오후 07:15", "tag": "목·눈 케어", "title": "어깨 돌리기 10회 + 턱 당기기 5분 & 인공눈물 점안"}, {"time": "오후 08:00 ~ 오후 09:30", "tag": "저녁·무릎", "title": "저녁 식사 & 의자에 앉아 다리 뻗어 5초 버티기(좌우 10회)"}, {"time": "오후 11:00 ~ 자정 12:00", "tag": "업무 3차", "title": "재택근무 3차 (1시간 집중 업무 & 오늘 업무 마감)"}, {"time": "자정 12:00 ~ 새벽 03:50", "tag": "휴식·금식", "title": "따뜻한 물 샤워 및 자유 휴식 (야식 금지, 물 마시기)"}, {"time": "새벽 03:50 ~ 새벽 04:30", "tag": "취침 준비", "title": "온열 눈 찜질 5~10분 → 스마트폰 멀리 두고 소등 후 취침"}]}, {"day": 20, "iso": "2026-12-08", "dateLabel": "12월 8일 (화)", "year": 2026, "month": 12, "dayOfMonth": 8, "weekday": "화", "phaseShort": "1개월 차 (3~4주)", "phaseDesc": "낮 12시 기상 & 실내 몸 깨우기", "tasks": [{"time": "오후 12:30", "tag": "기상·눈", "title": "기상 직후 인공눈물 1방울 + 물 1컵 + 침대 탈출"}, {"time": "오후 01:00 ~ 오후 02:00", "tag": "업무 1차", "title": "재택근무 1차 (1시간 집중 업무)"}, {"time": "오후 02:00 ~ 오후 02:20", "tag": "스트레칭·공부", "title": "목·어깨 5분 스트레칭 + [15분 공부] 일본어: 히라가나/가타카나 10자 & 인사말 3문장"}, {"time": "오후 03:00 ~ 오후 04:30", "tag": "식사·걷기", "title": "첫 끼 식사 & 실내 스트레칭 + 평지 가볍게 15분 걷기"}, {"time": "오후 06:00 ~ 오후 07:00", "tag": "업무 2차", "title": "재택근무 2차 (1시간 집중 & 중간에 먼 곳 보며 눈 휴식)"}, {"time": "오후 07:00 ~ 오후 07:15", "tag": "목·눈 케어", "title": "어깨 돌리기 10회 + 턱 당기기 5분 & 인공눈물 점안"}, {"time": "오후 08:00 ~ 오후 09:30", "tag": "저녁·무릎", "title": "저녁 식사 & 의자에 앉아 다리 뻗어 5초 버티기(좌우 10회)"}, {"time": "오후 11:00 ~ 자정 12:00", "tag": "업무 3차", "title": "재택근무 3차 (1시간 집중 업무 & 오늘 업무 마감)"}, {"time": "자정 12:00 ~ 새벽 03:50", "tag": "휴식·금식", "title": "따뜻한 물 샤워 및 자유 휴식 (야식 금지, 물 마시기)"}, {"time": "새벽 03:50 ~ 새벽 04:30", "tag": "취침 준비", "title": "온열 눈 찜질 5~10분 → 스마트폰 멀리 두고 소등 후 취침"}]}, {"day": 21, "iso": "2026-12-09", "dateLabel": "12월 9일 (수)", "year": 2026, "month": 12, "dayOfMonth": 9, "weekday": "수", "phaseShort": "1개월 차 (3~4주)", "phaseDesc": "낮 12시 기상 & 실내 몸 깨우기", "tasks": [{"time": "오후 12:30", "tag": "기상·눈", "title": "기상 직후 인공눈물 1방울 + 물 1컵 + 침대 탈출"}, {"time": "오후 01:00 ~ 오후 02:00", "tag": "업무 1차", "title": "재택근무 1차 (1시간 집중 업무)"}, {"time": "오후 02:00 ~ 오후 02:20", "tag": "스트레칭·공부", "title": "목·어깨 5분 스트레칭 + [15분 공부] 한자: 기초 부수 및 생활 한자 3글자 쓰기"}, {"time": "오후 03:00 ~ 오후 04:30", "tag": "식사·걷기", "title": "첫 끼 식사 & 실내 스트레칭 + 평지 가볍게 15분 걷기"}, {"time": "오후 06:00 ~ 오후 07:00", "tag": "업무 2차", "title": "재택근무 2차 (1시간 집중 & 중간에 먼 곳 보며 눈 휴식)"}, {"time": "오후 07:00 ~ 오후 07:15", "tag": "목·눈 케어", "title": "어깨 돌리기 10회 + 턱 당기기 5분 & 인공눈물 점안"}, {"time": "오후 08:00 ~ 오후 09:30", "tag": "저녁·무릎", "title": "저녁 식사 & 의자에 앉아 다리 뻗어 5초 버티기(좌우 10회)"}, {"time": "오후 11:00 ~ 자정 12:00", "tag": "업무 3차", "title": "재택근무 3차 (1시간 집중 업무 & 오늘 업무 마감)"}, {"time": "자정 12:00 ~ 새벽 03:50", "tag": "휴식·금식", "title": "따뜻한 물 샤워 및 자유 휴식 (야식 금지, 물 마시기)"}, {"time": "새벽 03:50 ~ 새벽 04:30", "tag": "취침 준비", "title": "온열 눈 찜질 5~10분 → 스마트폰 멀리 두고 소등 후 취침"}]}, {"day": 22, "iso": "2026-12-10", "dateLabel": "12월 10일 (목)", "year": 2026, "month": 12, "dayOfMonth": 10, "weekday": "목", "phaseShort": "1개월 차 (3~4주)", "phaseDesc": "낮 12시 기상 & 실내 몸 깨우기", "tasks": [{"time": "오후 12:30", "tag": "기상·눈", "title": "기상 직후 인공눈물 1방울 + 물 1컵 + 침대 탈출"}, {"time": "오후 01:00 ~ 오후 02:00", "tag": "업무 1차", "title": "재택근무 1차 (1시간 집중 업무)"}, {"time": "오후 02:00 ~ 오후 02:20", "tag": "스트레칭·공부", "title": "목·어깨 5분 스트레칭 + [15분 공부] 한국사: 10~15분 시대별 요약 영상 1편 시청"}, {"time": "오후 03:00 ~ 오후 04:30", "tag": "식사·걷기", "title": "첫 끼 식사 & 실내 스트레칭 + 평지 가볍게 15분 걷기"}, {"time": "오후 06:00 ~ 오후 07:00", "tag": "업무 2차", "title": "재택근무 2차 (1시간 집중 & 중간에 먼 곳 보며 눈 휴식)"}, {"time": "오후 07:00 ~ 오후 07:15", "tag": "목·눈 케어", "title": "어깨 돌리기 10회 + 턱 당기기 5분 & 인공눈물 점안"}, {"time": "오후 08:00 ~ 오후 09:30", "tag": "저녁·무릎", "title": "저녁 식사 & 의자에 앉아 다리 뻗어 5초 버티기(좌우 10회)"}, {"time": "오후 11:00 ~ 자정 12:00", "tag": "업무 3차", "title": "재택근무 3차 (1시간 집중 업무 & 오늘 업무 마감)"}, {"time": "자정 12:00 ~ 새벽 03:50", "tag": "휴식·금식", "title": "따뜻한 물 샤워 및 자유 휴식 (야식 금지, 물 마시기)"}, {"time": "새벽 03:50 ~ 새벽 04:30", "tag": "취침 준비", "title": "온열 눈 찜질 5~10분 → 스마트폰 멀리 두고 소등 후 취침"}]}, {"day": 23, "iso": "2026-12-11", "dateLabel": "12월 11일 (금)", "year": 2026, "month": 12, "dayOfMonth": 11, "weekday": "금", "phaseShort": "1개월 차 (3~4주)", "phaseDesc": "낮 12시 기상 & 실내 몸 깨우기", "tasks": [{"time": "오후 12:30", "tag": "기상·눈", "title": "기상 직후 인공눈물 1방울 + 물 1컵 + 침대 탈출"}, {"time": "오후 01:00 ~ 오후 02:00", "tag": "업무 1차", "title": "재택근무 1차 (1시간 집중 업무)"}, {"time": "오후 02:00 ~ 오후 02:20", "tag": "스트레칭·공부", "title": "목·어깨 5분 스트레칭 + [15분 공부] 영어: 주간 학습 단어 복습 & 짧은 예문 읽기"}, {"time": "오후 03:00 ~ 오후 04:30", "tag": "식사·걷기", "title": "첫 끼 식사 & 실내 스트레칭 + 평지 가볍게 15분 걷기"}, {"time": "오후 06:00 ~ 오후 07:00", "tag": "업무 2차", "title": "재택근무 2차 (1시간 집중 & 중간에 먼 곳 보며 눈 휴식)"}, {"time": "오후 07:00 ~ 오후 07:15", "tag": "목·눈 케어", "title": "어깨 돌리기 10회 + 턱 당기기 5분 & 인공눈물 점안"}, {"time": "오후 08:00 ~ 오후 09:30", "tag": "저녁·무릎", "title": "저녁 식사 & 의자에 앉아 다리 뻗어 5초 버티기(좌우 10회)"}, {"time": "오후 11:00 ~ 자정 12:00", "tag": "업무 3차", "title": "재택근무 3차 (1시간 집중 업무 & 오늘 업무 마감)"}, {"time": "자정 12:00 ~ 새벽 03:50", "tag": "휴식·금식", "title": "따뜻한 물 샤워 및 자유 휴식 (야식 금지, 물 마시기)"}, {"time": "새벽 03:50 ~ 새벽 04:30", "tag": "취침 준비", "title": "온열 눈 찜질 5~10분 → 스마트폰 멀리 두고 소등 후 취침"}]}, {"day": 24, "iso": "2026-12-12", "dateLabel": "12월 12일 (토)", "year": 2026, "month": 12, "dayOfMonth": 12, "weekday": "토", "phaseShort": "1개월 차 (3~4주)", "phaseDesc": "낮 12시 기상 & 실내 몸 깨우기", "tasks": [{"time": "오후 12:30", "tag": "기상·눈", "title": "기상 직후 인공눈물 1방울 + 물 1컵 + 침대 탈출"}, {"time": "오후 01:00 ~ 오후 02:00", "tag": "업무 1차", "title": "재택근무 1차 (1시간 집중 업무)"}, {"time": "오후 02:00 ~ 오후 02:20", "tag": "스트레칭·공부", "title": "목·어깨 5분 스트레칭 + [15분 공부] 일본어·한자: 주중 배운 글자 10분 가볍게 복습"}, {"time": "오후 03:00 ~ 오후 04:30", "tag": "식사·걷기", "title": "첫 끼 식사 & 실내 스트레칭 + 평지 가볍게 15분 걷기"}, {"time": "오후 06:00 ~ 오후 07:00", "tag": "업무 2차", "title": "재택근무 2차 (1시간 집중 & 중간에 먼 곳 보며 눈 휴식)"}, {"time": "오후 07:00 ~ 오후 07:15", "tag": "목·눈 케어", "title": "어깨 돌리기 10회 + 턱 당기기 5분 & 인공눈물 점안"}, {"time": "오후 08:00 ~ 오후 09:30", "tag": "저녁·무릎", "title": "저녁 식사 & 의자에 앉아 다리 뻗어 5초 버티기(좌우 10회)"}, {"time": "오후 11:00 ~ 자정 12:00", "tag": "업무 3차", "title": "재택근무 3차 (1시간 집중 업무 & 오늘 업무 마감)"}, {"time": "자정 12:00 ~ 새벽 03:50", "tag": "휴식·금식", "title": "따뜻한 물 샤워 및 자유 휴식 (야식 금지, 물 마시기)"}, {"time": "새벽 03:50 ~ 새벽 04:30", "tag": "취침 준비", "title": "온열 눈 찜질 5~10분 → 스마트폰 멀리 두고 소등 후 취침"}]}, {"day": 25, "iso": "2026-12-13", "dateLabel": "12월 13일 (일)", "year": 2026, "month": 12, "dayOfMonth": 13, "weekday": "일", "phaseShort": "1개월 차 (3~4주)", "phaseDesc": "낮 12시 기상 & 실내 몸 깨우기", "tasks": [{"time": "오후 12:30", "tag": "기상·눈", "title": "기상 직후 인공눈물 1방울 + 물 1컵 + 침대 탈출"}, {"time": "오후 01:00 ~ 오후 02:00", "tag": "업무 1차", "title": "재택근무 1차 (1시간 집중 업무)"}, {"time": "오후 02:00 ~ 오후 02:20", "tag": "스트레칭·공부", "title": "목·어깨 5분 스트레칭 + [15분 공부] 한국사·자유: 흥미로운 역사 다큐/영상 15분 보기"}, {"time": "오후 03:00 ~ 오후 04:30", "tag": "식사·걷기", "title": "첫 끼 식사 & 실내 스트레칭 + 평지 가볍게 15분 걷기"}, {"time": "오후 06:00 ~ 오후 07:00", "tag": "업무 2차", "title": "재택근무 2차 (1시간 집중 & 중간에 먼 곳 보며 눈 휴식)"}, {"time": "오후 07:00 ~ 오후 07:15", "tag": "목·눈 케어", "title": "어깨 돌리기 10회 + 턱 당기기 5분 & 인공눈물 점안"}, {"time": "오후 08:00 ~ 오후 09:30", "tag": "저녁·무릎", "title": "저녁 식사 & 의자에 앉아 다리 뻗어 5초 버티기(좌우 10회)"}, {"time": "오후 11:00 ~ 자정 12:00", "tag": "업무 3차", "title": "재택근무 3차 (1시간 집중 업무 & 오늘 업무 마감)"}, {"time": "자정 12:00 ~ 새벽 03:50", "tag": "휴식·금식", "title": "따뜻한 물 샤워 및 자유 휴식 (야식 금지, 물 마시기)"}, {"time": "새벽 03:50 ~ 새벽 04:30", "tag": "취침 준비", "title": "온열 눈 찜질 5~10분 → 스마트폰 멀리 두고 소등 후 취침"}]}, {"day": 26, "iso": "2026-12-14", "dateLabel": "12월 14일 (월)", "year": 2026, "month": 12, "dayOfMonth": 14, "weekday": "월", "phaseShort": "1개월 차 (3~4주)", "phaseDesc": "낮 12시 기상 & 실내 몸 깨우기", "tasks": [{"time": "오후 12:30", "tag": "기상·눈", "title": "기상 직후 인공눈물 1방울 + 물 1컵 + 침대 탈출"}, {"time": "오후 01:00 ~ 오후 02:00", "tag": "업무 1차", "title": "재택근무 1차 (1시간 집중 업무)"}, {"time": "오후 02:00 ~ 오후 02:20", "tag": "스트레칭·공부", "title": "목·어깨 5분 스트레칭 + [15분 공부] 영어: 기초 단어 5개 뜻·발음 익히기"}, {"time": "오후 03:00 ~ 오후 04:30", "tag": "식사·걷기", "title": "첫 끼 식사 & 실내 스트레칭 + 평지 가볍게 15분 걷기"}, {"time": "오후 06:00 ~ 오후 07:00", "tag": "업무 2차", "title": "재택근무 2차 (1시간 집중 & 중간에 먼 곳 보며 눈 휴식)"}, {"time": "오후 07:00 ~ 오후 07:15", "tag": "목·눈 케어", "title": "어깨 돌리기 10회 + 턱 당기기 5분 & 인공눈물 점안"}, {"time": "오후 08:00 ~ 오후 09:30", "tag": "저녁·무릎", "title": "저녁 식사 & 의자에 앉아 다리 뻗어 5초 버티기(좌우 10회)"}, {"time": "오후 11:00 ~ 자정 12:00", "tag": "업무 3차", "title": "재택근무 3차 (1시간 집중 업무 & 오늘 업무 마감)"}, {"time": "자정 12:00 ~ 새벽 03:50", "tag": "휴식·금식", "title": "따뜻한 물 샤워 및 자유 휴식 (야식 금지, 물 마시기)"}, {"time": "새벽 03:50 ~ 새벽 04:30", "tag": "취침 준비", "title": "온열 눈 찜질 5~10분 → 스마트폰 멀리 두고 소등 후 취침"}]}, {"day": 27, "iso": "2026-12-15", "dateLabel": "12월 15일 (화)", "year": 2026, "month": 12, "dayOfMonth": 15, "weekday": "화", "phaseShort": "1개월 차 (3~4주)", "phaseDesc": "낮 12시 기상 & 실내 몸 깨우기", "tasks": [{"time": "오후 12:30", "tag": "기상·눈", "title": "기상 직후 인공눈물 1방울 + 물 1컵 + 침대 탈출"}, {"time": "오후 01:00 ~ 오후 02:00", "tag": "업무 1차", "title": "재택근무 1차 (1시간 집중 업무)"}, {"time": "오후 02:00 ~ 오후 02:20", "tag": "스트레칭·공부", "title": "목·어깨 5분 스트레칭 + [15분 공부] 일본어: 히라가나/가타카나 10자 & 인사말 3문장"}, {"time": "오후 03:00 ~ 오후 04:30", "tag": "식사·걷기", "title": "첫 끼 식사 & 실내 스트레칭 + 평지 가볍게 15분 걷기"}, {"time": "오후 06:00 ~ 오후 07:00", "tag": "업무 2차", "title": "재택근무 2차 (1시간 집중 & 중간에 먼 곳 보며 눈 휴식)"}, {"time": "오후 07:00 ~ 오후 07:15", "tag": "목·눈 케어", "title": "어깨 돌리기 10회 + 턱 당기기 5분 & 인공눈물 점안"}, {"time": "오후 08:00 ~ 오후 09:30", "tag": "저녁·무릎", "title": "저녁 식사 & 의자에 앉아 다리 뻗어 5초 버티기(좌우 10회)"}, {"time": "오후 11:00 ~ 자정 12:00", "tag": "업무 3차", "title": "재택근무 3차 (1시간 집중 업무 & 오늘 업무 마감)"}, {"time": "자정 12:00 ~ 새벽 03:50", "tag": "휴식·금식", "title": "따뜻한 물 샤워 및 자유 휴식 (야식 금지, 물 마시기)"}, {"time": "새벽 03:50 ~ 새벽 04:30", "tag": "취침 준비", "title": "온열 눈 찜질 5~10분 → 스마트폰 멀리 두고 소등 후 취침"}]}, {"day": 28, "iso": "2026-12-16", "dateLabel": "12월 16일 (수)", "year": 2026, "month": 12, "dayOfMonth": 16, "weekday": "수", "phaseShort": "1개월 차 (3~4주)", "phaseDesc": "낮 12시 기상 & 실내 몸 깨우기", "tasks": [{"time": "오후 12:30", "tag": "기상·눈", "title": "기상 직후 인공눈물 1방울 + 물 1컵 + 침대 탈출"}, {"time": "오후 01:00 ~ 오후 02:00", "tag": "업무 1차", "title": "재택근무 1차 (1시간 집중 업무)"}, {"time": "오후 02:00 ~ 오후 02:20", "tag": "스트레칭·공부", "title": "목·어깨 5분 스트레칭 + [15분 공부] 한자: 기초 부수 및 생활 한자 3글자 쓰기"}, {"time": "오후 03:00 ~ 오후 04:30", "tag": "식사·걷기", "title": "첫 끼 식사 & 실내 스트레칭 + 평지 가볍게 15분 걷기"}, {"time": "오후 06:00 ~ 오후 07:00", "tag": "업무 2차", "title": "재택근무 2차 (1시간 집중 & 중간에 먼 곳 보며 눈 휴식)"}, {"time": "오후 07:00 ~ 오후 07:15", "tag": "목·눈 케어", "title": "어깨 돌리기 10회 + 턱 당기기 5분 & 인공눈물 점안"}, {"time": "오후 08:00 ~ 오후 09:30", "tag": "저녁·무릎", "title": "저녁 식사 & 의자에 앉아 다리 뻗어 5초 버티기(좌우 10회)"}, {"time": "오후 11:00 ~ 자정 12:00", "tag": "업무 3차", "title": "재택근무 3차 (1시간 집중 업무 & 오늘 업무 마감)"}, {"time": "자정 12:00 ~ 새벽 03:50", "tag": "휴식·금식", "title": "따뜻한 물 샤워 및 자유 휴식 (야식 금지, 물 마시기)"}, {"time": "새벽 03:50 ~ 새벽 04:30", "tag": "취침 준비", "title": "온열 눈 찜질 5~10분 → 스마트폰 멀리 두고 소등 후 취침"}]}, {"day": 29, "iso": "2026-12-17", "dateLabel": "12월 17일 (목)", "year": 2026, "month": 12, "dayOfMonth": 17, "weekday": "목", "phaseShort": "1개월 차 (3~4주)", "phaseDesc": "낮 12시 기상 & 실내 몸 깨우기", "tasks": [{"time": "오후 12:30", "tag": "기상·눈", "title": "기상 직후 인공눈물 1방울 + 물 1컵 + 침대 탈출"}, {"time": "오후 01:00 ~ 오후 02:00", "tag": "업무 1차", "title": "재택근무 1차 (1시간 집중 업무)"}, {"time": "오후 02:00 ~ 오후 02:20", "tag": "스트레칭·공부", "title": "목·어깨 5분 스트레칭 + [15분 공부] 한국사: 10~15분 시대별 요약 영상 1편 시청"}, {"time": "오후 03:00 ~ 오후 04:30", "tag": "식사·걷기", "title": "첫 끼 식사 & 실내 스트레칭 + 평지 가볍게 15분 걷기"}, {"time": "오후 06:00 ~ 오후 07:00", "tag": "업무 2차", "title": "재택근무 2차 (1시간 집중 & 중간에 먼 곳 보며 눈 휴식)"}, {"time": "오후 07:00 ~ 오후 07:15", "tag": "목·눈 케어", "title": "어깨 돌리기 10회 + 턱 당기기 5분 & 인공눈물 점안"}, {"time": "오후 08:00 ~ 오후 09:30", "tag": "저녁·무릎", "title": "저녁 식사 & 의자에 앉아 다리 뻗어 5초 버티기(좌우 10회)"}, {"time": "오후 11:00 ~ 자정 12:00", "tag": "업무 3차", "title": "재택근무 3차 (1시간 집중 업무 & 오늘 업무 마감)"}, {"time": "자정 12:00 ~ 새벽 03:50", "tag": "휴식·금식", "title": "따뜻한 물 샤워 및 자유 휴식 (야식 금지, 물 마시기)"}, {"time": "새벽 03:50 ~ 새벽 04:30", "tag": "취침 준비", "title": "온열 눈 찜질 5~10분 → 스마트폰 멀리 두고 소등 후 취침"}]}, {"day": 30, "iso": "2026-12-18", "dateLabel": "12월 18일 (금)", "year": 2026, "month": 12, "dayOfMonth": 18, "weekday": "금", "phaseShort": "1개월 차 (3~4주)", "phaseDesc": "낮 12시 기상 & 실내 몸 깨우기", "tasks": [{"time": "오후 12:30", "tag": "기상·눈", "title": "기상 직후 인공눈물 1방울 + 물 1컵 + 침대 탈출"}, {"time": "오후 01:00 ~ 오후 02:00", "tag": "업무 1차", "title": "재택근무 1차 (1시간 집중 업무)"}, {"time": "오후 02:00 ~ 오후 02:20", "tag": "스트레칭·공부", "title": "목·어깨 5분 스트레칭 + [15분 공부] 영어: 주간 학습 단어 복습 & 짧은 예문 읽기"}, {"time": "오후 03:00 ~ 오후 04:30", "tag": "식사·걷기", "title": "첫 끼 식사 & 실내 스트레칭 + 평지 가볍게 15분 걷기"}, {"time": "오후 06:00 ~ 오후 07:00", "tag": "업무 2차", "title": "재택근무 2차 (1시간 집중 & 중간에 먼 곳 보며 눈 휴식)"}, {"time": "오후 07:00 ~ 오후 07:15", "tag": "목·눈 케어", "title": "어깨 돌리기 10회 + 턱 당기기 5분 & 인공눈물 점안"}, {"time": "오후 08:00 ~ 오후 09:30", "tag": "저녁·무릎", "title": "저녁 식사 & 의자에 앉아 다리 뻗어 5초 버티기(좌우 10회)"}, {"time": "오후 11:00 ~ 자정 12:00", "tag": "업무 3차", "title": "재택근무 3차 (1시간 집중 업무 & 오늘 업무 마감)"}, {"time": "자정 12:00 ~ 새벽 03:50", "tag": "휴식·금식", "title": "따뜻한 물 샤워 및 자유 휴식 (야식 금지, 물 마시기)"}, {"time": "새벽 03:50 ~ 새벽 04:30", "tag": "취침 준비", "title": "온열 눈 찜질 5~10분 → 스마트폰 멀리 두고 소등 후 취침"}]}, {"day": 31, "iso": "2026-12-19", "dateLabel": "12월 19일 (토)", "year": 2026, "month": 12, "dayOfMonth": 19, "weekday": "토", "phaseShort": "2개월 차 (5~6주)", "phaseDesc": "오전 기상 진입 & 야외 평지 산책", "tasks": [{"time": "오전 11:30", "tag": "기상·눈", "title": "기상 직후 인공눈물 1방울 + 물 1컵 + 침대 탈출"}, {"time": "오후 12:00 ~ 오후 01:00", "tag": "업무 1차", "title": "재택근무 1차 (1시간 집중 업무)"}, {"time": "오후 01:00 ~ 오후 01:20", "tag": "스트레칭·공부①", "title": "목·어깨 5분 스트레칭 + [공부① 15분] 일본어: 애니메이션/드라마 짧은 클립 15분 듣기"}, {"time": "오후 01:50 ~ 오후 03:30", "tag": "식사·산책", "title": "균형 식사(단백질 위주) & 바깥 공기 평지 산책 20~25분"}, {"time": "오후 05:00 ~ 오후 06:00", "tag": "업무 2차", "title": "재택근무 2차 (1시간 집중 & 중간에 먼 곳 보며 눈 휴식)"}, {"time": "오후 06:00 ~ 오후 06:20", "tag": "스트레칭·공부②", "title": "어깨·목 스트레칭 5분 + [공부② 15분] 한국사: 한국사능력검정 기초 문제 10문제 풀이"}, {"time": "오후 07:00 ~ 오후 08:30", "tag": "저녁·무릎", "title": "가벼운 저녁(집밥 권장) & 의자 레그 익스텐션 15회×2세트"}, {"time": "오후 10:00 ~ 오후 11:00", "tag": "업무 3차", "title": "재택근무 3차 (1시간 집중 업무 & 오늘 업무 마감)"}, {"time": "오후 11:00 ~ 새벽 02:50", "tag": "휴식·금식", "title": "따뜻한 물 샤워 및 자유 휴식 (야식 금지, 물 마시기)"}, {"time": "새벽 02:50 ~ 새벽 03:30", "tag": "취침 준비", "title": "온열 눈 찜질 5~10분 → 스마트폰 멀리 두고 소등 후 취침"}]}, {"day": 32, "iso": "2026-12-20", "dateLabel": "12월 20일 (일)", "year": 2026, "month": 12, "dayOfMonth": 20, "weekday": "일", "phaseShort": "2개월 차 (5~6주)", "phaseDesc": "오전 기상 진입 & 야외 평지 산책", "tasks": [{"time": "오전 11:30", "tag": "기상·눈", "title": "기상 직후 인공눈물 1방울 + 물 1컵 + 침대 탈출"}, {"time": "오후 12:00 ~ 오후 01:00", "tag": "업무 1차", "title": "재택근무 1차 (1시간 집중 업무)"}, {"time": "오후 01:00 ~ 오후 01:20", "tag": "스트레칭·공부①", "title": "목·어깨 5분 스트레칭 + [공부① 15분] 영어·일본어: 한 주 배운 표현 15분 가볍게 복습"}, {"time": "오후 01:50 ~ 오후 03:30", "tag": "식사·산책", "title": "균형 식사(단백질 위주) & 바깥 공기 평지 산책 20~25분"}, {"time": "오후 05:00 ~ 오후 06:00", "tag": "업무 2차", "title": "재택근무 2차 (1시간 집중 & 중간에 먼 곳 보며 눈 휴식)"}, {"time": "오후 06:00 ~ 오후 06:20", "tag": "스트레칭·공부②", "title": "어깨·목 스트레칭 5분 + [공부② 15분] 한자·한국사: 주간 학습 내용 15분 가볍게 복습"}, {"time": "오후 07:00 ~ 오후 08:30", "tag": "저녁·무릎", "title": "가벼운 저녁(집밥 권장) & 의자 레그 익스텐션 15회×2세트"}, {"time": "오후 10:00 ~ 오후 11:00", "tag": "업무 3차", "title": "재택근무 3차 (1시간 집중 업무 & 오늘 업무 마감)"}, {"time": "오후 11:00 ~ 새벽 02:50", "tag": "휴식·금식", "title": "따뜻한 물 샤워 및 자유 휴식 (야식 금지, 물 마시기)"}, {"time": "새벽 02:50 ~ 새벽 03:30", "tag": "취침 준비", "title": "온열 눈 찜질 5~10분 → 스마트폰 멀리 두고 소등 후 취침"}]}, {"day": 33, "iso": "2026-12-21", "dateLabel": "12월 21일 (월)", "year": 2026, "month": 12, "dayOfMonth": 21, "weekday": "월", "phaseShort": "2개월 차 (5~6주)", "phaseDesc": "오전 기상 진입 & 야외 평지 산책", "tasks": [{"time": "오전 11:30", "tag": "기상·눈", "title": "기상 직후 인공눈물 1방울 + 물 1컵 + 침대 탈출"}, {"time": "오후 12:00 ~ 오후 01:00", "tag": "업무 1차", "title": "재택근무 1차 (1시간 집중 업무)"}, {"time": "오후 01:00 ~ 오후 01:20", "tag": "스트레칭·공부①", "title": "목·어깨 5분 스트레칭 + [공부① 15분] 영어: 기초 문장 패턴 5개 & 소리 내어 읽기"}, {"time": "오후 01:50 ~ 오후 03:30", "tag": "식사·산책", "title": "균형 식사(단백질 위주) & 바깥 공기 평지 산책 20~25분"}, {"time": "오후 05:00 ~ 오후 06:00", "tag": "업무 2차", "title": "재택근무 2차 (1시간 집중 & 중간에 먼 곳 보며 눈 휴식)"}, {"time": "오후 06:00 ~ 오후 06:20", "tag": "스트레칭·공부②", "title": "어깨·목 스트레칭 5분 + [공부② 15분] 한자: 생활 필수 한자 5자 쓰기 및 훈음 암기"}, {"time": "오후 07:00 ~ 오후 08:30", "tag": "저녁·무릎", "title": "가벼운 저녁(집밥 권장) & 의자 레그 익스텐션 15회×2세트"}, {"time": "오후 10:00 ~ 오후 11:00", "tag": "업무 3차", "title": "재택근무 3차 (1시간 집중 업무 & 오늘 업무 마감)"}, {"time": "오후 11:00 ~ 새벽 02:50", "tag": "휴식·금식", "title": "따뜻한 물 샤워 및 자유 휴식 (야식 금지, 물 마시기)"}, {"time": "새벽 02:50 ~ 새벽 03:30", "tag": "취침 준비", "title": "온열 눈 찜질 5~10분 → 스마트폰 멀리 두고 소등 후 취침"}]}, {"day": 34, "iso": "2026-12-22", "dateLabel": "12월 22일 (화)", "year": 2026, "month": 12, "dayOfMonth": 22, "weekday": "화", "phaseShort": "2개월 차 (5~6주)", "phaseDesc": "오전 기상 진입 & 야외 평지 산책", "tasks": [{"time": "오전 11:30", "tag": "기상·눈", "title": "기상 직후 인공눈물 1방울 + 물 1컵 + 침대 탈출"}, {"time": "오후 12:00 ~ 오후 01:00", "tag": "업무 1차", "title": "재택근무 1차 (1시간 집중 업무)"}, {"time": "오후 01:00 ~ 오후 01:20", "tag": "스트레칭·공부①", "title": "목·어깨 5분 스트레칭 + [공부① 15분] 일본어: 기초 회화 문장 5개 듣고 따라 말하기"}, {"time": "오후 01:50 ~ 오후 03:30", "tag": "식사·산책", "title": "균형 식사(단백질 위주) & 바깥 공기 평지 산책 20~25분"}, {"time": "오후 05:00 ~ 오후 06:00", "tag": "업무 2차", "title": "재택근무 2차 (1시간 집중 & 중간에 먼 곳 보며 눈 휴식)"}, {"time": "오후 06:00 ~ 오후 06:20", "tag": "스트레칭·공부②", "title": "어깨·목 스트레칭 5분 + [공부② 15분] 한국사: 시대 흐름 강의 1편 15분 수강"}, {"time": "오후 07:00 ~ 오후 08:30", "tag": "저녁·무릎", "title": "가벼운 저녁(집밥 권장) & 의자 레그 익스텐션 15회×2세트"}, {"time": "오후 10:00 ~ 오후 11:00", "tag": "업무 3차", "title": "재택근무 3차 (1시간 집중 업무 & 오늘 업무 마감)"}, {"time": "오후 11:00 ~ 새벽 02:50", "tag": "휴식·금식", "title": "따뜻한 물 샤워 및 자유 휴식 (야식 금지, 물 마시기)"}, {"time": "새벽 02:50 ~ 새벽 03:30", "tag": "취침 준비", "title": "온열 눈 찜질 5~10분 → 스마트폰 멀리 두고 소등 후 취침"}]}, {"day": 35, "iso": "2026-12-23", "dateLabel": "12월 23일 (수)", "year": 2026, "month": 12, "dayOfMonth": 23, "weekday": "수", "phaseShort": "2개월 차 (5~6주)", "phaseDesc": "오전 기상 진입 & 야외 평지 산책", "tasks": [{"time": "오전 11:30", "tag": "기상·눈", "title": "기상 직후 인공눈물 1방울 + 물 1컵 + 침대 탈출"}, {"time": "오후 12:00 ~ 오후 01:00", "tag": "업무 1차", "title": "재택근무 1차 (1시간 집중 업무)"}, {"time": "오후 01:00 ~ 오후 01:20", "tag": "스트레칭·공부①", "title": "목·어깨 5분 스트레칭 + [공부① 15분] 영어: 짧은 영어 영상/뉴스 15분 쉐도잉"}, {"time": "오후 01:50 ~ 오후 03:30", "tag": "식사·산책", "title": "균형 식사(단백질 위주) & 바깥 공기 평지 산책 20~25분"}, {"time": "오후 05:00 ~ 오후 06:00", "tag": "업무 2차", "title": "재택근무 2차 (1시간 집중 & 중간에 먼 곳 보며 눈 휴식)"}, {"time": "오후 06:00 ~ 오후 06:20", "tag": "스트레칭·공부②", "title": "어깨·목 스트레칭 5분 + [공부② 15분] 한자: 사자성어 및 한자어 5개 익히기"}, {"time": "오후 07:00 ~ 오후 08:30", "tag": "저녁·무릎", "title": "가벼운 저녁(집밥 권장) & 의자 레그 익스텐션 15회×2세트"}, {"time": "오후 10:00 ~ 오후 11:00", "tag": "업무 3차", "title": "재택근무 3차 (1시간 집중 업무 & 오늘 업무 마감)"}, {"time": "오후 11:00 ~ 새벽 02:50", "tag": "휴식·금식", "title": "따뜻한 물 샤워 및 자유 휴식 (야식 금지, 물 마시기)"}, {"time": "새벽 02:50 ~ 새벽 03:30", "tag": "취침 준비", "title": "온열 눈 찜질 5~10분 → 스마트폰 멀리 두고 소등 후 취침"}]}, {"day": 36, "iso": "2026-12-24", "dateLabel": "12월 24일 (목)", "year": 2026, "month": 12, "dayOfMonth": 24, "weekday": "목", "phaseShort": "2개월 차 (5~6주)", "phaseDesc": "오전 기상 진입 & 야외 평지 산책", "tasks": [{"time": "오전 11:30", "tag": "기상·눈", "title": "기상 직후 인공눈물 1방울 + 물 1컵 + 침대 탈출"}, {"time": "오후 12:00 ~ 오후 01:00", "tag": "업무 1차", "title": "재택근무 1차 (1시간 집중 업무)"}, {"time": "오후 01:00 ~ 오후 01:20", "tag": "스트레칭·공부①", "title": "목·어깨 5분 스트레칭 + [공부① 15분] 일본어: 기초 문법 1파트 & 단어 7개 암기"}, {"time": "오후 01:50 ~ 오후 03:30", "tag": "식사·산책", "title": "균형 식사(단백질 위주) & 바깥 공기 평지 산책 20~25분"}, {"time": "오후 05:00 ~ 오후 06:00", "tag": "업무 2차", "title": "재택근무 2차 (1시간 집중 & 중간에 먼 곳 보며 눈 휴식)"}, {"time": "오후 06:00 ~ 오후 06:20", "tag": "스트레칭·공부②", "title": "어깨·목 스트레칭 5분 + [공부② 15분] 한국사: 핵심 사건 요약 정리 및 퀴즈 15분"}, {"time": "오후 07:00 ~ 오후 08:30", "tag": "저녁·무릎", "title": "가벼운 저녁(집밥 권장) & 의자 레그 익스텐션 15회×2세트"}, {"time": "오후 10:00 ~ 오후 11:00", "tag": "업무 3차", "title": "재택근무 3차 (1시간 집중 업무 & 오늘 업무 마감)"}, {"time": "오후 11:00 ~ 새벽 02:50", "tag": "휴식·금식", "title": "따뜻한 물 샤워 및 자유 휴식 (야식 금지, 물 마시기)"}, {"time": "새벽 02:50 ~ 새벽 03:30", "tag": "취침 준비", "title": "온열 눈 찜질 5~10분 → 스마트폰 멀리 두고 소등 후 취침"}]}, {"day": 37, "iso": "2026-12-25", "dateLabel": "12월 25일 (금)", "year": 2026, "month": 12, "dayOfMonth": 25, "weekday": "금", "phaseShort": "2개월 차 (5~6주)", "phaseDesc": "오전 기상 진입 & 야외 평지 산책", "tasks": [{"time": "오전 11:30", "tag": "기상·눈", "title": "기상 직후 인공눈물 1방울 + 물 1컵 + 침대 탈출"}, {"time": "오후 12:00 ~ 오후 01:00", "tag": "업무 1차", "title": "재택근무 1차 (1시간 집중 업무)"}, {"time": "오후 01:00 ~ 오후 01:20", "tag": "스트레칭·공부①", "title": "목·어깨 5분 스트레칭 + [공부① 15분] 영어: 주간 표현 복습 및 영작 3문장"}, {"time": "오후 01:50 ~ 오후 03:30", "tag": "식사·산책", "title": "균형 식사(단백질 위주) & 바깥 공기 평지 산책 20~25분"}, {"time": "오후 05:00 ~ 오후 06:00", "tag": "업무 2차", "title": "재택근무 2차 (1시간 집중 & 중간에 먼 곳 보며 눈 휴식)"}, {"time": "오후 06:00 ~ 오후 06:20", "tag": "스트레칭·공부②", "title": "어깨·목 스트레칭 5분 + [공부② 15분] 한자: 주간 학습 한자 15분 백지 복습"}, {"time": "오후 07:00 ~ 오후 08:30", "tag": "저녁·무릎", "title": "가벼운 저녁(집밥 권장) & 의자 레그 익스텐션 15회×2세트"}, {"time": "오후 10:00 ~ 오후 11:00", "tag": "업무 3차", "title": "재택근무 3차 (1시간 집중 업무 & 오늘 업무 마감)"}, {"time": "오후 11:00 ~ 새벽 02:50", "tag": "휴식·금식", "title": "따뜻한 물 샤워 및 자유 휴식 (야식 금지, 물 마시기)"}, {"time": "새벽 02:50 ~ 새벽 03:30", "tag": "취침 준비", "title": "온열 눈 찜질 5~10분 → 스마트폰 멀리 두고 소등 후 취침"}]}, {"day": 38, "iso": "2026-12-26", "dateLabel": "12월 26일 (토)", "year": 2026, "month": 12, "dayOfMonth": 26, "weekday": "토", "phaseShort": "2개월 차 (5~6주)", "phaseDesc": "오전 기상 진입 & 야외 평지 산책", "tasks": [{"time": "오전 11:30", "tag": "기상·눈", "title": "기상 직후 인공눈물 1방울 + 물 1컵 + 침대 탈출"}, {"time": "오후 12:00 ~ 오후 01:00", "tag": "업무 1차", "title": "재택근무 1차 (1시간 집중 업무)"}, {"time": "오후 01:00 ~ 오후 01:20", "tag": "스트레칭·공부①", "title": "목·어깨 5분 스트레칭 + [공부① 15분] 일본어: 애니메이션/드라마 짧은 클립 15분 듣기"}, {"time": "오후 01:50 ~ 오후 03:30", "tag": "식사·산책", "title": "균형 식사(단백질 위주) & 바깥 공기 평지 산책 20~25분"}, {"time": "오후 05:00 ~ 오후 06:00", "tag": "업무 2차", "title": "재택근무 2차 (1시간 집중 & 중간에 먼 곳 보며 눈 휴식)"}, {"time": "오후 06:00 ~ 오후 06:20", "tag": "스트레칭·공부②", "title": "어깨·목 스트레칭 5분 + [공부② 15분] 한국사: 한국사능력검정 기초 문제 10문제 풀이"}, {"time": "오후 07:00 ~ 오후 08:30", "tag": "저녁·무릎", "title": "가벼운 저녁(집밥 권장) & 의자 레그 익스텐션 15회×2세트"}, {"time": "오후 10:00 ~ 오후 11:00", "tag": "업무 3차", "title": "재택근무 3차 (1시간 집중 업무 & 오늘 업무 마감)"}, {"time": "오후 11:00 ~ 새벽 02:50", "tag": "휴식·금식", "title": "따뜻한 물 샤워 및 자유 휴식 (야식 금지, 물 마시기)"}, {"time": "새벽 02:50 ~ 새벽 03:30", "tag": "취침 준비", "title": "온열 눈 찜질 5~10분 → 스마트폰 멀리 두고 소등 후 취침"}]}, {"day": 39, "iso": "2026-12-27", "dateLabel": "12월 27일 (일)", "year": 2026, "month": 12, "dayOfMonth": 27, "weekday": "일", "phaseShort": "2개월 차 (5~6주)", "phaseDesc": "오전 기상 진입 & 야외 평지 산책", "tasks": [{"time": "오전 11:30", "tag": "기상·눈", "title": "기상 직후 인공눈물 1방울 + 물 1컵 + 침대 탈출"}, {"time": "오후 12:00 ~ 오후 01:00", "tag": "업무 1차", "title": "재택근무 1차 (1시간 집중 업무)"}, {"time": "오후 01:00 ~ 오후 01:20", "tag": "스트레칭·공부①", "title": "목·어깨 5분 스트레칭 + [공부① 15분] 영어·일본어: 한 주 배운 표현 15분 가볍게 복습"}, {"time": "오후 01:50 ~ 오후 03:30", "tag": "식사·산책", "title": "균형 식사(단백질 위주) & 바깥 공기 평지 산책 20~25분"}, {"time": "오후 05:00 ~ 오후 06:00", "tag": "업무 2차", "title": "재택근무 2차 (1시간 집중 & 중간에 먼 곳 보며 눈 휴식)"}, {"time": "오후 06:00 ~ 오후 06:20", "tag": "스트레칭·공부②", "title": "어깨·목 스트레칭 5분 + [공부② 15분] 한자·한국사: 주간 학습 내용 15분 가볍게 복습"}, {"time": "오후 07:00 ~ 오후 08:30", "tag": "저녁·무릎", "title": "가벼운 저녁(집밥 권장) & 의자 레그 익스텐션 15회×2세트"}, {"time": "오후 10:00 ~ 오후 11:00", "tag": "업무 3차", "title": "재택근무 3차 (1시간 집중 업무 & 오늘 업무 마감)"}, {"time": "오후 11:00 ~ 새벽 02:50", "tag": "휴식·금식", "title": "따뜻한 물 샤워 및 자유 휴식 (야식 금지, 물 마시기)"}, {"time": "새벽 02:50 ~ 새벽 03:30", "tag": "취침 준비", "title": "온열 눈 찜질 5~10분 → 스마트폰 멀리 두고 소등 후 취침"}]}, {"day": 40, "iso": "2026-12-28", "dateLabel": "12월 28일 (월)", "year": 2026, "month": 12, "dayOfMonth": 28, "weekday": "월", "phaseShort": "2개월 차 (5~6주)", "phaseDesc": "오전 기상 진입 & 야외 평지 산책", "tasks": [{"time": "오전 11:30", "tag": "기상·눈", "title": "기상 직후 인공눈물 1방울 + 물 1컵 + 침대 탈출"}, {"time": "오후 12:00 ~ 오후 01:00", "tag": "업무 1차", "title": "재택근무 1차 (1시간 집중 업무)"}, {"time": "오후 01:00 ~ 오후 01:20", "tag": "스트레칭·공부①", "title": "목·어깨 5분 스트레칭 + [공부① 15분] 영어: 기초 문장 패턴 5개 & 소리 내어 읽기"}, {"time": "오후 01:50 ~ 오후 03:30", "tag": "식사·산책", "title": "균형 식사(단백질 위주) & 바깥 공기 평지 산책 20~25분"}, {"time": "오후 05:00 ~ 오후 06:00", "tag": "업무 2차", "title": "재택근무 2차 (1시간 집중 & 중간에 먼 곳 보며 눈 휴식)"}, {"time": "오후 06:00 ~ 오후 06:20", "tag": "스트레칭·공부②", "title": "어깨·목 스트레칭 5분 + [공부② 15분] 한자: 생활 필수 한자 5자 쓰기 및 훈음 암기"}, {"time": "오후 07:00 ~ 오후 08:30", "tag": "저녁·무릎", "title": "가벼운 저녁(집밥 권장) & 의자 레그 익스텐션 15회×2세트"}, {"time": "오후 10:00 ~ 오후 11:00", "tag": "업무 3차", "title": "재택근무 3차 (1시간 집중 업무 & 오늘 업무 마감)"}, {"time": "오후 11:00 ~ 새벽 02:50", "tag": "휴식·금식", "title": "따뜻한 물 샤워 및 자유 휴식 (야식 금지, 물 마시기)"}, {"time": "새벽 02:50 ~ 새벽 03:30", "tag": "취침 준비", "title": "온열 눈 찜질 5~10분 → 스마트폰 멀리 두고 소등 후 취침"}]}, {"day": 41, "iso": "2026-12-29", "dateLabel": "12월 29일 (화)", "year": 2026, "month": 12, "dayOfMonth": 29, "weekday": "화", "phaseShort": "2개월 차 (5~6주)", "phaseDesc": "오전 기상 진입 & 야외 평지 산책", "tasks": [{"time": "오전 11:30", "tag": "기상·눈", "title": "기상 직후 인공눈물 1방울 + 물 1컵 + 침대 탈출"}, {"time": "오후 12:00 ~ 오후 01:00", "tag": "업무 1차", "title": "재택근무 1차 (1시간 집중 업무)"}, {"time": "오후 01:00 ~ 오후 01:20", "tag": "스트레칭·공부①", "title": "목·어깨 5분 스트레칭 + [공부① 15분] 일본어: 기초 회화 문장 5개 듣고 따라 말하기"}, {"time": "오후 01:50 ~ 오후 03:30", "tag": "식사·산책", "title": "균형 식사(단백질 위주) & 바깥 공기 평지 산책 20~25분"}, {"time": "오후 05:00 ~ 오후 06:00", "tag": "업무 2차", "title": "재택근무 2차 (1시간 집중 & 중간에 먼 곳 보며 눈 휴식)"}, {"time": "오후 06:00 ~ 오후 06:20", "tag": "스트레칭·공부②", "title": "어깨·목 스트레칭 5분 + [공부② 15분] 한국사: 시대 흐름 강의 1편 15분 수강"}, {"time": "오후 07:00 ~ 오후 08:30", "tag": "저녁·무릎", "title": "가벼운 저녁(집밥 권장) & 의자 레그 익스텐션 15회×2세트"}, {"time": "오후 10:00 ~ 오후 11:00", "tag": "업무 3차", "title": "재택근무 3차 (1시간 집중 업무 & 오늘 업무 마감)"}, {"time": "오후 11:00 ~ 새벽 02:50", "tag": "휴식·금식", "title": "따뜻한 물 샤워 및 자유 휴식 (야식 금지, 물 마시기)"}, {"time": "새벽 02:50 ~ 새벽 03:30", "tag": "취침 준비", "title": "온열 눈 찜질 5~10분 → 스마트폰 멀리 두고 소등 후 취침"}]}, {"day": 42, "iso": "2026-12-30", "dateLabel": "12월 30일 (수)", "year": 2026, "month": 12, "dayOfMonth": 30, "weekday": "수", "phaseShort": "2개월 차 (5~6주)", "phaseDesc": "오전 기상 진입 & 야외 평지 산책", "tasks": [{"time": "오전 11:30", "tag": "기상·눈", "title": "기상 직후 인공눈물 1방울 + 물 1컵 + 침대 탈출"}, {"time": "오후 12:00 ~ 오후 01:00", "tag": "업무 1차", "title": "재택근무 1차 (1시간 집중 업무)"}, {"time": "오후 01:00 ~ 오후 01:20", "tag": "스트레칭·공부①", "title": "목·어깨 5분 스트레칭 + [공부① 15분] 영어: 짧은 영어 영상/뉴스 15분 쉐도잉"}, {"time": "오후 01:50 ~ 오후 03:30", "tag": "식사·산책", "title": "균형 식사(단백질 위주) & 바깥 공기 평지 산책 20~25분"}, {"time": "오후 05:00 ~ 오후 06:00", "tag": "업무 2차", "title": "재택근무 2차 (1시간 집중 & 중간에 먼 곳 보며 눈 휴식)"}, {"time": "오후 06:00 ~ 오후 06:20", "tag": "스트레칭·공부②", "title": "어깨·목 스트레칭 5분 + [공부② 15분] 한자: 사자성어 및 한자어 5개 익히기"}, {"time": "오후 07:00 ~ 오후 08:30", "tag": "저녁·무릎", "title": "가벼운 저녁(집밥 권장) & 의자 레그 익스텐션 15회×2세트"}, {"time": "오후 10:00 ~ 오후 11:00", "tag": "업무 3차", "title": "재택근무 3차 (1시간 집중 업무 & 오늘 업무 마감)"}, {"time": "오후 11:00 ~ 새벽 02:50", "tag": "휴식·금식", "title": "따뜻한 물 샤워 및 자유 휴식 (야식 금지, 물 마시기)"}, {"time": "새벽 02:50 ~ 새벽 03:30", "tag": "취침 준비", "title": "온열 눈 찜질 5~10분 → 스마트폰 멀리 두고 소등 후 취침"}]}, {"day": 43, "iso": "2026-12-31", "dateLabel": "12월 31일 (목)", "year": 2026, "month": 12, "dayOfMonth": 31, "weekday": "목", "phaseShort": "2개월 차 (5~6주)", "phaseDesc": "오전 기상 진입 & 야외 평지 산책", "tasks": [{"time": "오전 11:30", "tag": "기상·눈", "title": "기상 직후 인공눈물 1방울 + 물 1컵 + 침대 탈출"}, {"time": "오후 12:00 ~ 오후 01:00", "tag": "업무 1차", "title": "재택근무 1차 (1시간 집중 업무)"}, {"time": "오후 01:00 ~ 오후 01:20", "tag": "스트레칭·공부①", "title": "목·어깨 5분 스트레칭 + [공부① 15분] 일본어: 기초 문법 1파트 & 단어 7개 암기"}, {"time": "오후 01:50 ~ 오후 03:30", "tag": "식사·산책", "title": "균형 식사(단백질 위주) & 바깥 공기 평지 산책 20~25분"}, {"time": "오후 05:00 ~ 오후 06:00", "tag": "업무 2차", "title": "재택근무 2차 (1시간 집중 & 중간에 먼 곳 보며 눈 휴식)"}, {"time": "오후 06:00 ~ 오후 06:20", "tag": "스트레칭·공부②", "title": "어깨·목 스트레칭 5분 + [공부② 15분] 한국사: 핵심 사건 요약 정리 및 퀴즈 15분"}, {"time": "오후 07:00 ~ 오후 08:30", "tag": "저녁·무릎", "title": "가벼운 저녁(집밥 권장) & 의자 레그 익스텐션 15회×2세트"}, {"time": "오후 10:00 ~ 오후 11:00", "tag": "업무 3차", "title": "재택근무 3차 (1시간 집중 업무 & 오늘 업무 마감)"}, {"time": "오후 11:00 ~ 새벽 02:50", "tag": "휴식·금식", "title": "따뜻한 물 샤워 및 자유 휴식 (야식 금지, 물 마시기)"}, {"time": "새벽 02:50 ~ 새벽 03:30", "tag": "취침 준비", "title": "온열 눈 찜질 5~10분 → 스마트폰 멀리 두고 소등 후 취침"}]}, {"day": 44, "iso": "2027-01-01", "dateLabel": "1월 1일 (금)", "year": 2027, "month": 1, "dayOfMonth": 1, "weekday": "금", "phaseShort": "2개월 차 (5~6주)", "phaseDesc": "오전 기상 진입 & 야외 평지 산책", "tasks": [{"time": "오전 11:30", "tag": "기상·눈", "title": "기상 직후 인공눈물 1방울 + 물 1컵 + 침대 탈출"}, {"time": "오후 12:00 ~ 오후 01:00", "tag": "업무 1차", "title": "재택근무 1차 (1시간 집중 업무)"}, {"time": "오후 01:00 ~ 오후 01:20", "tag": "스트레칭·공부①", "title": "목·어깨 5분 스트레칭 + [공부① 15분] 영어: 주간 표현 복습 및 영작 3문장"}, {"time": "오후 01:50 ~ 오후 03:30", "tag": "식사·산책", "title": "균형 식사(단백질 위주) & 바깥 공기 평지 산책 20~25분"}, {"time": "오후 05:00 ~ 오후 06:00", "tag": "업무 2차", "title": "재택근무 2차 (1시간 집중 & 중간에 먼 곳 보며 눈 휴식)"}, {"time": "오후 06:00 ~ 오후 06:20", "tag": "스트레칭·공부②", "title": "어깨·목 스트레칭 5분 + [공부② 15분] 한자: 주간 학습 한자 15분 백지 복습"}, {"time": "오후 07:00 ~ 오후 08:30", "tag": "저녁·무릎", "title": "가벼운 저녁(집밥 권장) & 의자 레그 익스텐션 15회×2세트"}, {"time": "오후 10:00 ~ 오후 11:00", "tag": "업무 3차", "title": "재택근무 3차 (1시간 집중 업무 & 오늘 업무 마감)"}, {"time": "오후 11:00 ~ 새벽 02:50", "tag": "휴식·금식", "title": "따뜻한 물 샤워 및 자유 휴식 (야식 금지, 물 마시기)"}, {"time": "새벽 02:50 ~ 새벽 03:30", "tag": "취침 준비", "title": "온열 눈 찜질 5~10분 → 스마트폰 멀리 두고 소등 후 취침"}]}, {"day": 45, "iso": "2027-01-02", "dateLabel": "1월 2일 (토)", "year": 2027, "month": 1, "dayOfMonth": 2, "weekday": "토", "phaseShort": "2개월 차 (5~6주)", "phaseDesc": "오전 기상 진입 & 야외 평지 산책", "tasks": [{"time": "오전 11:30", "tag": "기상·눈", "title": "기상 직후 인공눈물 1방울 + 물 1컵 + 침대 탈출"}, {"time": "오후 12:00 ~ 오후 01:00", "tag": "업무 1차", "title": "재택근무 1차 (1시간 집중 업무)"}, {"time": "오후 01:00 ~ 오후 01:20", "tag": "스트레칭·공부①", "title": "목·어깨 5분 스트레칭 + [공부① 15분] 일본어: 애니메이션/드라마 짧은 클립 15분 듣기"}, {"time": "오후 01:50 ~ 오후 03:30", "tag": "식사·산책", "title": "균형 식사(단백질 위주) & 바깥 공기 평지 산책 20~25분"}, {"time": "오후 05:00 ~ 오후 06:00", "tag": "업무 2차", "title": "재택근무 2차 (1시간 집중 & 중간에 먼 곳 보며 눈 휴식)"}, {"time": "오후 06:00 ~ 오후 06:20", "tag": "스트레칭·공부②", "title": "어깨·목 스트레칭 5분 + [공부② 15분] 한국사: 한국사능력검정 기초 문제 10문제 풀이"}, {"time": "오후 07:00 ~ 오후 08:30", "tag": "저녁·무릎", "title": "가벼운 저녁(집밥 권장) & 의자 레그 익스텐션 15회×2세트"}, {"time": "오후 10:00 ~ 오후 11:00", "tag": "업무 3차", "title": "재택근무 3차 (1시간 집중 업무 & 오늘 업무 마감)"}, {"time": "오후 11:00 ~ 새벽 02:50", "tag": "휴식·금식", "title": "따뜻한 물 샤워 및 자유 휴식 (야식 금지, 물 마시기)"}, {"time": "새벽 02:50 ~ 새벽 03:30", "tag": "취침 준비", "title": "온열 눈 찜질 5~10분 → 스마트폰 멀리 두고 소등 후 취침"}]}, {"day": 46, "iso": "2027-01-03", "dateLabel": "1월 3일 (일)", "year": 2027, "month": 1, "dayOfMonth": 3, "weekday": "일", "phaseShort": "2개월 차 (7~8주)", "phaseDesc": "오전 10시 기상 & 집밥·학습 확장", "tasks": [{"time": "오전 10:00", "tag": "기상·눈", "title": "기상 직후 인공눈물 1방울 + 물 1컵 + 침대 탈출"}, {"time": "오전 10:30 ~ 오전 11:30", "tag": "업무 1차", "title": "재택근무 1차 (1시간 집중 업무)"}, {"time": "오전 11:30 ~ 오전 11:50", "tag": "스트레칭·공부①", "title": "목·어깨 5분 스트레칭 + [공부① 15분] 영어·일본어: 한 주 배운 표현 15분 가볍게 복습"}, {"time": "오후 12:20 ~ 오후 02:00", "tag": "식사·산책", "title": "균형 식사(단백질 위주) & 바깥 공기 평지 산책 20~25분"}, {"time": "오후 03:30 ~ 오후 04:30", "tag": "업무 2차", "title": "재택근무 2차 (1시간 집중 & 중간에 먼 곳 보며 눈 휴식)"}, {"time": "오후 04:30 ~ 오후 04:50", "tag": "스트레칭·공부②", "title": "어깨·목 스트레칭 5분 + [공부② 15분] 한자·한국사: 주간 학습 내용 15분 가볍게 복습"}, {"time": "오후 05:30 ~ 오후 07:00", "tag": "저녁·무릎", "title": "가벼운 저녁(집밥 권장) & 의자 레그 익스텐션 15회×2세트"}, {"time": "오후 08:30 ~ 오후 09:30", "tag": "업무 3차", "title": "재택근무 3차 (1시간 집중 업무 & 오늘 업무 마감)"}, {"time": "오후 09:30 ~ 새벽 01:20", "tag": "휴식·금식", "title": "따뜻한 물 샤워 및 자유 휴식 (야식 금지, 물 마시기)"}, {"time": "새벽 01:20 ~ 새벽 02:00", "tag": "취침 준비", "title": "온열 눈 찜질 5~10분 → 스마트폰 멀리 두고 소등 후 취침"}]}, {"day": 47, "iso": "2027-01-04", "dateLabel": "1월 4일 (월)", "year": 2027, "month": 1, "dayOfMonth": 4, "weekday": "월", "phaseShort": "2개월 차 (7~8주)", "phaseDesc": "오전 10시 기상 & 집밥·학습 확장", "tasks": [{"time": "오전 10:00", "tag": "기상·눈", "title": "기상 직후 인공눈물 1방울 + 물 1컵 + 침대 탈출"}, {"time": "오전 10:30 ~ 오전 11:30", "tag": "업무 1차", "title": "재택근무 1차 (1시간 집중 업무)"}, {"time": "오전 11:30 ~ 오전 11:50", "tag": "스트레칭·공부①", "title": "목·어깨 5분 스트레칭 + [공부① 15분] 영어: 기초 문장 패턴 5개 & 소리 내어 읽기"}, {"time": "오후 12:20 ~ 오후 02:00", "tag": "식사·산책", "title": "균형 식사(단백질 위주) & 바깥 공기 평지 산책 20~25분"}, {"time": "오후 03:30 ~ 오후 04:30", "tag": "업무 2차", "title": "재택근무 2차 (1시간 집중 & 중간에 먼 곳 보며 눈 휴식)"}, {"time": "오후 04:30 ~ 오후 04:50", "tag": "스트레칭·공부②", "title": "어깨·목 스트레칭 5분 + [공부② 15분] 한자: 생활 필수 한자 5자 쓰기 및 훈음 암기"}, {"time": "오후 05:30 ~ 오후 07:00", "tag": "저녁·무릎", "title": "가벼운 저녁(집밥 권장) & 의자 레그 익스텐션 15회×2세트"}, {"time": "오후 08:30 ~ 오후 09:30", "tag": "업무 3차", "title": "재택근무 3차 (1시간 집중 업무 & 오늘 업무 마감)"}, {"time": "오후 09:30 ~ 새벽 01:20", "tag": "휴식·금식", "title": "따뜻한 물 샤워 및 자유 휴식 (야식 금지, 물 마시기)"}, {"time": "새벽 01:20 ~ 새벽 02:00", "tag": "취침 준비", "title": "온열 눈 찜질 5~10분 → 스마트폰 멀리 두고 소등 후 취침"}]}, {"day": 48, "iso": "2027-01-05", "dateLabel": "1월 5일 (화)", "year": 2027, "month": 1, "dayOfMonth": 5, "weekday": "화", "phaseShort": "2개월 차 (7~8주)", "phaseDesc": "오전 10시 기상 & 집밥·학습 확장", "tasks": [{"time": "오전 10:00", "tag": "기상·눈", "title": "기상 직후 인공눈물 1방울 + 물 1컵 + 침대 탈출"}, {"time": "오전 10:30 ~ 오전 11:30", "tag": "업무 1차", "title": "재택근무 1차 (1시간 집중 업무)"}, {"time": "오전 11:30 ~ 오전 11:50", "tag": "스트레칭·공부①", "title": "목·어깨 5분 스트레칭 + [공부① 15분] 일본어: 기초 회화 문장 5개 듣고 따라 말하기"}, {"time": "오후 12:20 ~ 오후 02:00", "tag": "식사·산책", "title": "균형 식사(단백질 위주) & 바깥 공기 평지 산책 20~25분"}, {"time": "오후 03:30 ~ 오후 04:30", "tag": "업무 2차", "title": "재택근무 2차 (1시간 집중 & 중간에 먼 곳 보며 눈 휴식)"}, {"time": "오후 04:30 ~ 오후 04:50", "tag": "스트레칭·공부②", "title": "어깨·목 스트레칭 5분 + [공부② 15분] 한국사: 시대 흐름 강의 1편 15분 수강"}, {"time": "오후 05:30 ~ 오후 07:00", "tag": "저녁·무릎", "title": "가벼운 저녁(집밥 권장) & 의자 레그 익스텐션 15회×2세트"}, {"time": "오후 08:30 ~ 오후 09:30", "tag": "업무 3차", "title": "재택근무 3차 (1시간 집중 업무 & 오늘 업무 마감)"}, {"time": "오후 09:30 ~ 새벽 01:20", "tag": "휴식·금식", "title": "따뜻한 물 샤워 및 자유 휴식 (야식 금지, 물 마시기)"}, {"time": "새벽 01:20 ~ 새벽 02:00", "tag": "취침 준비", "title": "온열 눈 찜질 5~10분 → 스마트폰 멀리 두고 소등 후 취침"}]}, {"day": 49, "iso": "2027-01-06", "dateLabel": "1월 6일 (수)", "year": 2027, "month": 1, "dayOfMonth": 6, "weekday": "수", "phaseShort": "2개월 차 (7~8주)", "phaseDesc": "오전 10시 기상 & 집밥·학습 확장", "tasks": [{"time": "오전 10:00", "tag": "기상·눈", "title": "기상 직후 인공눈물 1방울 + 물 1컵 + 침대 탈출"}, {"time": "오전 10:30 ~ 오전 11:30", "tag": "업무 1차", "title": "재택근무 1차 (1시간 집중 업무)"}, {"time": "오전 11:30 ~ 오전 11:50", "tag": "스트레칭·공부①", "title": "목·어깨 5분 스트레칭 + [공부① 15분] 영어: 짧은 영어 영상/뉴스 15분 쉐도잉"}, {"time": "오후 12:20 ~ 오후 02:00", "tag": "식사·산책", "title": "균형 식사(단백질 위주) & 바깥 공기 평지 산책 20~25분"}, {"time": "오후 03:30 ~ 오후 04:30", "tag": "업무 2차", "title": "재택근무 2차 (1시간 집중 & 중간에 먼 곳 보며 눈 휴식)"}, {"time": "오후 04:30 ~ 오후 04:50", "tag": "스트레칭·공부②", "title": "어깨·목 스트레칭 5분 + [공부② 15분] 한자: 사자성어 및 한자어 5개 익히기"}, {"time": "오후 05:30 ~ 오후 07:00", "tag": "저녁·무릎", "title": "가벼운 저녁(집밥 권장) & 의자 레그 익스텐션 15회×2세트"}, {"time": "오후 08:30 ~ 오후 09:30", "tag": "업무 3차", "title": "재택근무 3차 (1시간 집중 업무 & 오늘 업무 마감)"}, {"time": "오후 09:30 ~ 새벽 01:20", "tag": "휴식·금식", "title": "따뜻한 물 샤워 및 자유 휴식 (야식 금지, 물 마시기)"}, {"time": "새벽 01:20 ~ 새벽 02:00", "tag": "취침 준비", "title": "온열 눈 찜질 5~10분 → 스마트폰 멀리 두고 소등 후 취침"}]}, {"day": 50, "iso": "2027-01-07", "dateLabel": "1월 7일 (목)", "year": 2027, "month": 1, "dayOfMonth": 7, "weekday": "목", "phaseShort": "2개월 차 (7~8주)", "phaseDesc": "오전 10시 기상 & 집밥·학습 확장", "tasks": [{"time": "오전 10:00", "tag": "기상·눈", "title": "기상 직후 인공눈물 1방울 + 물 1컵 + 침대 탈출"}, {"time": "오전 10:30 ~ 오전 11:30", "tag": "업무 1차", "title": "재택근무 1차 (1시간 집중 업무)"}, {"time": "오전 11:30 ~ 오전 11:50", "tag": "스트레칭·공부①", "title": "목·어깨 5분 스트레칭 + [공부① 15분] 일본어: 기초 문법 1파트 & 단어 7개 암기"}, {"time": "오후 12:20 ~ 오후 02:00", "tag": "식사·산책", "title": "균형 식사(단백질 위주) & 바깥 공기 평지 산책 20~25분"}, {"time": "오후 03:30 ~ 오후 04:30", "tag": "업무 2차", "title": "재택근무 2차 (1시간 집중 & 중간에 먼 곳 보며 눈 휴식)"}, {"time": "오후 04:30 ~ 오후 04:50", "tag": "스트레칭·공부②", "title": "어깨·목 스트레칭 5분 + [공부② 15분] 한국사: 핵심 사건 요약 정리 및 퀴즈 15분"}, {"time": "오후 05:30 ~ 오후 07:00", "tag": "저녁·무릎", "title": "가벼운 저녁(집밥 권장) & 의자 레그 익스텐션 15회×2세트"}, {"time": "오후 08:30 ~ 오후 09:30", "tag": "업무 3차", "title": "재택근무 3차 (1시간 집중 업무 & 오늘 업무 마감)"}, {"time": "오후 09:30 ~ 새벽 01:20", "tag": "휴식·금식", "title": "따뜻한 물 샤워 및 자유 휴식 (야식 금지, 물 마시기)"}, {"time": "새벽 01:20 ~ 새벽 02:00", "tag": "취침 준비", "title": "온열 눈 찜질 5~10분 → 스마트폰 멀리 두고 소등 후 취침"}]}, {"day": 51, "iso": "2027-01-08", "dateLabel": "1월 8일 (금)", "year": 2027, "month": 1, "dayOfMonth": 8, "weekday": "금", "phaseShort": "2개월 차 (7~8주)", "phaseDesc": "오전 10시 기상 & 집밥·학습 확장", "tasks": [{"time": "오전 10:00", "tag": "기상·눈", "title": "기상 직후 인공눈물 1방울 + 물 1컵 + 침대 탈출"}, {"time": "오전 10:30 ~ 오전 11:30", "tag": "업무 1차", "title": "재택근무 1차 (1시간 집중 업무)"}, {"time": "오전 11:30 ~ 오전 11:50", "tag": "스트레칭·공부①", "title": "목·어깨 5분 스트레칭 + [공부① 15분] 영어: 주간 표현 복습 및 영작 3문장"}, {"time": "오후 12:20 ~ 오후 02:00", "tag": "식사·산책", "title": "균형 식사(단백질 위주) & 바깥 공기 평지 산책 20~25분"}, {"time": "오후 03:30 ~ 오후 04:30", "tag": "업무 2차", "title": "재택근무 2차 (1시간 집중 & 중간에 먼 곳 보며 눈 휴식)"}, {"time": "오후 04:30 ~ 오후 04:50", "tag": "스트레칭·공부②", "title": "어깨·목 스트레칭 5분 + [공부② 15분] 한자: 주간 학습 한자 15분 백지 복습"}, {"time": "오후 05:30 ~ 오후 07:00", "tag": "저녁·무릎", "title": "가벼운 저녁(집밥 권장) & 의자 레그 익스텐션 15회×2세트"}, {"time": "오후 08:30 ~ 오후 09:30", "tag": "업무 3차", "title": "재택근무 3차 (1시간 집중 업무 & 오늘 업무 마감)"}, {"time": "오후 09:30 ~ 새벽 01:20", "tag": "휴식·금식", "title": "따뜻한 물 샤워 및 자유 휴식 (야식 금지, 물 마시기)"}, {"time": "새벽 01:20 ~ 새벽 02:00", "tag": "취침 준비", "title": "온열 눈 찜질 5~10분 → 스마트폰 멀리 두고 소등 후 취침"}]}, {"day": 52, "iso": "2027-01-09", "dateLabel": "1월 9일 (토)", "year": 2027, "month": 1, "dayOfMonth": 9, "weekday": "토", "phaseShort": "2개월 차 (7~8주)", "phaseDesc": "오전 10시 기상 & 집밥·학습 확장", "tasks": [{"time": "오전 10:00", "tag": "기상·눈", "title": "기상 직후 인공눈물 1방울 + 물 1컵 + 침대 탈출"}, {"time": "오전 10:30 ~ 오전 11:30", "tag": "업무 1차", "title": "재택근무 1차 (1시간 집중 업무)"}, {"time": "오전 11:30 ~ 오전 11:50", "tag": "스트레칭·공부①", "title": "목·어깨 5분 스트레칭 + [공부① 15분] 일본어: 애니메이션/드라마 짧은 클립 15분 듣기"}, {"time": "오후 12:20 ~ 오후 02:00", "tag": "식사·산책", "title": "균형 식사(단백질 위주) & 바깥 공기 평지 산책 20~25분"}, {"time": "오후 03:30 ~ 오후 04:30", "tag": "업무 2차", "title": "재택근무 2차 (1시간 집중 & 중간에 먼 곳 보며 눈 휴식)"}, {"time": "오후 04:30 ~ 오후 04:50", "tag": "스트레칭·공부②", "title": "어깨·목 스트레칭 5분 + [공부② 15분] 한국사: 한국사능력검정 기초 문제 10문제 풀이"}, {"time": "오후 05:30 ~ 오후 07:00", "tag": "저녁·무릎", "title": "가벼운 저녁(집밥 권장) & 의자 레그 익스텐션 15회×2세트"}, {"time": "오후 08:30 ~ 오후 09:30", "tag": "업무 3차", "title": "재택근무 3차 (1시간 집중 업무 & 오늘 업무 마감)"}, {"time": "오후 09:30 ~ 새벽 01:20", "tag": "휴식·금식", "title": "따뜻한 물 샤워 및 자유 휴식 (야식 금지, 물 마시기)"}, {"time": "새벽 01:20 ~ 새벽 02:00", "tag": "취침 준비", "title": "온열 눈 찜질 5~10분 → 스마트폰 멀리 두고 소등 후 취침"}]}, {"day": 53, "iso": "2027-01-10", "dateLabel": "1월 10일 (일)", "year": 2027, "month": 1, "dayOfMonth": 10, "weekday": "일", "phaseShort": "2개월 차 (7~8주)", "phaseDesc": "오전 10시 기상 & 집밥·학습 확장", "tasks": [{"time": "오전 10:00", "tag": "기상·눈", "title": "기상 직후 인공눈물 1방울 + 물 1컵 + 침대 탈출"}, {"time": "오전 10:30 ~ 오전 11:30", "tag": "업무 1차", "title": "재택근무 1차 (1시간 집중 업무)"}, {"time": "오전 11:30 ~ 오전 11:50", "tag": "스트레칭·공부①", "title": "목·어깨 5분 스트레칭 + [공부① 15분] 영어·일본어: 한 주 배운 표현 15분 가볍게 복습"}, {"time": "오후 12:20 ~ 오후 02:00", "tag": "식사·산책", "title": "균형 식사(단백질 위주) & 바깥 공기 평지 산책 20~25분"}, {"time": "오후 03:30 ~ 오후 04:30", "tag": "업무 2차", "title": "재택근무 2차 (1시간 집중 & 중간에 먼 곳 보며 눈 휴식)"}, {"time": "오후 04:30 ~ 오후 04:50", "tag": "스트레칭·공부②", "title": "어깨·목 스트레칭 5분 + [공부② 15분] 한자·한국사: 주간 학습 내용 15분 가볍게 복습"}, {"time": "오후 05:30 ~ 오후 07:00", "tag": "저녁·무릎", "title": "가벼운 저녁(집밥 권장) & 의자 레그 익스텐션 15회×2세트"}, {"time": "오후 08:30 ~ 오후 09:30", "tag": "업무 3차", "title": "재택근무 3차 (1시간 집중 업무 & 오늘 업무 마감)"}, {"time": "오후 09:30 ~ 새벽 01:20", "tag": "휴식·금식", "title": "따뜻한 물 샤워 및 자유 휴식 (야식 금지, 물 마시기)"}, {"time": "새벽 01:20 ~ 새벽 02:00", "tag": "취침 준비", "title": "온열 눈 찜질 5~10분 → 스마트폰 멀리 두고 소등 후 취침"}]}, {"day": 54, "iso": "2027-01-11", "dateLabel": "1월 11일 (월)", "year": 2027, "month": 1, "dayOfMonth": 11, "weekday": "월", "phaseShort": "2개월 차 (7~8주)", "phaseDesc": "오전 10시 기상 & 집밥·학습 확장", "tasks": [{"time": "오전 10:00", "tag": "기상·눈", "title": "기상 직후 인공눈물 1방울 + 물 1컵 + 침대 탈출"}, {"time": "오전 10:30 ~ 오전 11:30", "tag": "업무 1차", "title": "재택근무 1차 (1시간 집중 업무)"}, {"time": "오전 11:30 ~ 오전 11:50", "tag": "스트레칭·공부①", "title": "목·어깨 5분 스트레칭 + [공부① 15분] 영어: 기초 문장 패턴 5개 & 소리 내어 읽기"}, {"time": "오후 12:20 ~ 오후 02:00", "tag": "식사·산책", "title": "균형 식사(단백질 위주) & 바깥 공기 평지 산책 20~25분"}, {"time": "오후 03:30 ~ 오후 04:30", "tag": "업무 2차", "title": "재택근무 2차 (1시간 집중 & 중간에 먼 곳 보며 눈 휴식)"}, {"time": "오후 04:30 ~ 오후 04:50", "tag": "스트레칭·공부②", "title": "어깨·목 스트레칭 5분 + [공부② 15분] 한자: 생활 필수 한자 5자 쓰기 및 훈음 암기"}, {"time": "오후 05:30 ~ 오후 07:00", "tag": "저녁·무릎", "title": "가벼운 저녁(집밥 권장) & 의자 레그 익스텐션 15회×2세트"}, {"time": "오후 08:30 ~ 오후 09:30", "tag": "업무 3차", "title": "재택근무 3차 (1시간 집중 업무 & 오늘 업무 마감)"}, {"time": "오후 09:30 ~ 새벽 01:20", "tag": "휴식·금식", "title": "따뜻한 물 샤워 및 자유 휴식 (야식 금지, 물 마시기)"}, {"time": "새벽 01:20 ~ 새벽 02:00", "tag": "취침 준비", "title": "온열 눈 찜질 5~10분 → 스마트폰 멀리 두고 소등 후 취침"}]}, {"day": 55, "iso": "2027-01-12", "dateLabel": "1월 12일 (화)", "year": 2027, "month": 1, "dayOfMonth": 12, "weekday": "화", "phaseShort": "2개월 차 (7~8주)", "phaseDesc": "오전 10시 기상 & 집밥·학습 확장", "tasks": [{"time": "오전 10:00", "tag": "기상·눈", "title": "기상 직후 인공눈물 1방울 + 물 1컵 + 침대 탈출"}, {"time": "오전 10:30 ~ 오전 11:30", "tag": "업무 1차", "title": "재택근무 1차 (1시간 집중 업무)"}, {"time": "오전 11:30 ~ 오전 11:50", "tag": "스트레칭·공부①", "title": "목·어깨 5분 스트레칭 + [공부① 15분] 일본어: 기초 회화 문장 5개 듣고 따라 말하기"}, {"time": "오후 12:20 ~ 오후 02:00", "tag": "식사·산책", "title": "균형 식사(단백질 위주) & 바깥 공기 평지 산책 20~25분"}, {"time": "오후 03:30 ~ 오후 04:30", "tag": "업무 2차", "title": "재택근무 2차 (1시간 집중 & 중간에 먼 곳 보며 눈 휴식)"}, {"time": "오후 04:30 ~ 오후 04:50", "tag": "스트레칭·공부②", "title": "어깨·목 스트레칭 5분 + [공부② 15분] 한국사: 시대 흐름 강의 1편 15분 수강"}, {"time": "오후 05:30 ~ 오후 07:00", "tag": "저녁·무릎", "title": "가벼운 저녁(집밥 권장) & 의자 레그 익스텐션 15회×2세트"}, {"time": "오후 08:30 ~ 오후 09:30", "tag": "업무 3차", "title": "재택근무 3차 (1시간 집중 업무 & 오늘 업무 마감)"}, {"time": "오후 09:30 ~ 새벽 01:20", "tag": "휴식·금식", "title": "따뜻한 물 샤워 및 자유 휴식 (야식 금지, 물 마시기)"}, {"time": "새벽 01:20 ~ 새벽 02:00", "tag": "취침 준비", "title": "온열 눈 찜질 5~10분 → 스마트폰 멀리 두고 소등 후 취침"}]}, {"day": 56, "iso": "2027-01-13", "dateLabel": "1월 13일 (수)", "year": 2027, "month": 1, "dayOfMonth": 13, "weekday": "수", "phaseShort": "2개월 차 (7~8주)", "phaseDesc": "오전 10시 기상 & 집밥·학습 확장", "tasks": [{"time": "오전 10:00", "tag": "기상·눈", "title": "기상 직후 인공눈물 1방울 + 물 1컵 + 침대 탈출"}, {"time": "오전 10:30 ~ 오전 11:30", "tag": "업무 1차", "title": "재택근무 1차 (1시간 집중 업무)"}, {"time": "오전 11:30 ~ 오전 11:50", "tag": "스트레칭·공부①", "title": "목·어깨 5분 스트레칭 + [공부① 15분] 영어: 짧은 영어 영상/뉴스 15분 쉐도잉"}, {"time": "오후 12:20 ~ 오후 02:00", "tag": "식사·산책", "title": "균형 식사(단백질 위주) & 바깥 공기 평지 산책 20~25분"}, {"time": "오후 03:30 ~ 오후 04:30", "tag": "업무 2차", "title": "재택근무 2차 (1시간 집중 & 중간에 먼 곳 보며 눈 휴식)"}, {"time": "오후 04:30 ~ 오후 04:50", "tag": "스트레칭·공부②", "title": "어깨·목 스트레칭 5분 + [공부② 15분] 한자: 사자성어 및 한자어 5개 익히기"}, {"time": "오후 05:30 ~ 오후 07:00", "tag": "저녁·무릎", "title": "가벼운 저녁(집밥 권장) & 의자 레그 익스텐션 15회×2세트"}, {"time": "오후 08:30 ~ 오후 09:30", "tag": "업무 3차", "title": "재택근무 3차 (1시간 집중 업무 & 오늘 업무 마감)"}, {"time": "오후 09:30 ~ 새벽 01:20", "tag": "휴식·금식", "title": "따뜻한 물 샤워 및 자유 휴식 (야식 금지, 물 마시기)"}, {"time": "새벽 01:20 ~ 새벽 02:00", "tag": "취침 준비", "title": "온열 눈 찜질 5~10분 → 스마트폰 멀리 두고 소등 후 취침"}]}, {"day": 57, "iso": "2027-01-14", "dateLabel": "1월 14일 (목)", "year": 2027, "month": 1, "dayOfMonth": 14, "weekday": "목", "phaseShort": "2개월 차 (7~8주)", "phaseDesc": "오전 10시 기상 & 집밥·학습 확장", "tasks": [{"time": "오전 10:00", "tag": "기상·눈", "title": "기상 직후 인공눈물 1방울 + 물 1컵 + 침대 탈출"}, {"time": "오전 10:30 ~ 오전 11:30", "tag": "업무 1차", "title": "재택근무 1차 (1시간 집중 업무)"}, {"time": "오전 11:30 ~ 오전 11:50", "tag": "스트레칭·공부①", "title": "목·어깨 5분 스트레칭 + [공부① 15분] 일본어: 기초 문법 1파트 & 단어 7개 암기"}, {"time": "오후 12:20 ~ 오후 02:00", "tag": "식사·산책", "title": "균형 식사(단백질 위주) & 바깥 공기 평지 산책 20~25분"}, {"time": "오후 03:30 ~ 오후 04:30", "tag": "업무 2차", "title": "재택근무 2차 (1시간 집중 & 중간에 먼 곳 보며 눈 휴식)"}, {"time": "오후 04:30 ~ 오후 04:50", "tag": "스트레칭·공부②", "title": "어깨·목 스트레칭 5분 + [공부② 15분] 한국사: 핵심 사건 요약 정리 및 퀴즈 15분"}, {"time": "오후 05:30 ~ 오후 07:00", "tag": "저녁·무릎", "title": "가벼운 저녁(집밥 권장) & 의자 레그 익스텐션 15회×2세트"}, {"time": "오후 08:30 ~ 오후 09:30", "tag": "업무 3차", "title": "재택근무 3차 (1시간 집중 업무 & 오늘 업무 마감)"}, {"time": "오후 09:30 ~ 새벽 01:20", "tag": "휴식·금식", "title": "따뜻한 물 샤워 및 자유 휴식 (야식 금지, 물 마시기)"}, {"time": "새벽 01:20 ~ 새벽 02:00", "tag": "취침 준비", "title": "온열 눈 찜질 5~10분 → 스마트폰 멀리 두고 소등 후 취침"}]}, {"day": 58, "iso": "2027-01-15", "dateLabel": "1월 15일 (금)", "year": 2027, "month": 1, "dayOfMonth": 15, "weekday": "금", "phaseShort": "2개월 차 (7~8주)", "phaseDesc": "오전 10시 기상 & 집밥·학습 확장", "tasks": [{"time": "오전 10:00", "tag": "기상·눈", "title": "기상 직후 인공눈물 1방울 + 물 1컵 + 침대 탈출"}, {"time": "오전 10:30 ~ 오전 11:30", "tag": "업무 1차", "title": "재택근무 1차 (1시간 집중 업무)"}, {"time": "오전 11:30 ~ 오전 11:50", "tag": "스트레칭·공부①", "title": "목·어깨 5분 스트레칭 + [공부① 15분] 영어: 주간 표현 복습 및 영작 3문장"}, {"time": "오후 12:20 ~ 오후 02:00", "tag": "식사·산책", "title": "균형 식사(단백질 위주) & 바깥 공기 평지 산책 20~25분"}, {"time": "오후 03:30 ~ 오후 04:30", "tag": "업무 2차", "title": "재택근무 2차 (1시간 집중 & 중간에 먼 곳 보며 눈 휴식)"}, {"time": "오후 04:30 ~ 오후 04:50", "tag": "스트레칭·공부②", "title": "어깨·목 스트레칭 5분 + [공부② 15분] 한자: 주간 학습 한자 15분 백지 복습"}, {"time": "오후 05:30 ~ 오후 07:00", "tag": "저녁·무릎", "title": "가벼운 저녁(집밥 권장) & 의자 레그 익스텐션 15회×2세트"}, {"time": "오후 08:30 ~ 오후 09:30", "tag": "업무 3차", "title": "재택근무 3차 (1시간 집중 업무 & 오늘 업무 마감)"}, {"time": "오후 09:30 ~ 새벽 01:20", "tag": "휴식·금식", "title": "따뜻한 물 샤워 및 자유 휴식 (야식 금지, 물 마시기)"}, {"time": "새벽 01:20 ~ 새벽 02:00", "tag": "취침 준비", "title": "온열 눈 찜질 5~10분 → 스마트폰 멀리 두고 소등 후 취침"}]}, {"day": 59, "iso": "2027-01-16", "dateLabel": "1월 16일 (토)", "year": 2027, "month": 1, "dayOfMonth": 16, "weekday": "토", "phaseShort": "2개월 차 (7~8주)", "phaseDesc": "오전 10시 기상 & 집밥·학습 확장", "tasks": [{"time": "오전 10:00", "tag": "기상·눈", "title": "기상 직후 인공눈물 1방울 + 물 1컵 + 침대 탈출"}, {"time": "오전 10:30 ~ 오전 11:30", "tag": "업무 1차", "title": "재택근무 1차 (1시간 집중 업무)"}, {"time": "오전 11:30 ~ 오전 11:50", "tag": "스트레칭·공부①", "title": "목·어깨 5분 스트레칭 + [공부① 15분] 일본어: 애니메이션/드라마 짧은 클립 15분 듣기"}, {"time": "오후 12:20 ~ 오후 02:00", "tag": "식사·산책", "title": "균형 식사(단백질 위주) & 바깥 공기 평지 산책 20~25분"}, {"time": "오후 03:30 ~ 오후 04:30", "tag": "업무 2차", "title": "재택근무 2차 (1시간 집중 & 중간에 먼 곳 보며 눈 휴식)"}, {"time": "오후 04:30 ~ 오후 04:50", "tag": "스트레칭·공부②", "title": "어깨·목 스트레칭 5분 + [공부② 15분] 한국사: 한국사능력검정 기초 문제 10문제 풀이"}, {"time": "오후 05:30 ~ 오후 07:00", "tag": "저녁·무릎", "title": "가벼운 저녁(집밥 권장) & 의자 레그 익스텐션 15회×2세트"}, {"time": "오후 08:30 ~ 오후 09:30", "tag": "업무 3차", "title": "재택근무 3차 (1시간 집중 업무 & 오늘 업무 마감)"}, {"time": "오후 09:30 ~ 새벽 01:20", "tag": "휴식·금식", "title": "따뜻한 물 샤워 및 자유 휴식 (야식 금지, 물 마시기)"}, {"time": "새벽 01:20 ~ 새벽 02:00", "tag": "취침 준비", "title": "온열 눈 찜질 5~10분 → 스마트폰 멀리 두고 소등 후 취침"}]}, {"day": 60, "iso": "2027-01-17", "dateLabel": "1월 17일 (일)", "year": 2027, "month": 1, "dayOfMonth": 17, "weekday": "일", "phaseShort": "2개월 차 (7~8주)", "phaseDesc": "오전 10시 기상 & 집밥·학습 확장", "tasks": [{"time": "오전 10:00", "tag": "기상·눈", "title": "기상 직후 인공눈물 1방울 + 물 1컵 + 침대 탈출"}, {"time": "오전 10:30 ~ 오전 11:30", "tag": "업무 1차", "title": "재택근무 1차 (1시간 집중 업무)"}, {"time": "오전 11:30 ~ 오전 11:50", "tag": "스트레칭·공부①", "title": "목·어깨 5분 스트레칭 + [공부① 15분] 영어·일본어: 한 주 배운 표현 15분 가볍게 복습"}, {"time": "오후 12:20 ~ 오후 02:00", "tag": "식사·산책", "title": "균형 식사(단백질 위주) & 바깥 공기 평지 산책 20~25분"}, {"time": "오후 03:30 ~ 오후 04:30", "tag": "업무 2차", "title": "재택근무 2차 (1시간 집중 & 중간에 먼 곳 보며 눈 휴식)"}, {"time": "오후 04:30 ~ 오후 04:50", "tag": "스트레칭·공부②", "title": "어깨·목 스트레칭 5분 + [공부② 15분] 한자·한국사: 주간 학습 내용 15분 가볍게 복습"}, {"time": "오후 05:30 ~ 오후 07:00", "tag": "저녁·무릎", "title": "가벼운 저녁(집밥 권장) & 의자 레그 익스텐션 15회×2세트"}, {"time": "오후 08:30 ~ 오후 09:30", "tag": "업무 3차", "title": "재택근무 3차 (1시간 집중 업무 & 오늘 업무 마감)"}, {"time": "오후 09:30 ~ 새벽 01:20", "tag": "휴식·금식", "title": "따뜻한 물 샤워 및 자유 휴식 (야식 금지, 물 마시기)"}, {"time": "새벽 01:20 ~ 새벽 02:00", "tag": "취침 준비", "title": "온열 눈 찜질 5~10분 → 스마트폰 멀리 두고 소등 후 취침"}]}, {"day": 61, "iso": "2027-01-18", "dateLabel": "1월 18일 (월)", "year": 2027, "month": 1, "dayOfMonth": 18, "weekday": "월", "phaseShort": "3개월 차 (9~10주)", "phaseDesc": "오전 9시 기상 & 무릎 근력 강화", "tasks": [{"time": "오전 09:00", "tag": "기상·눈", "title": "기상 직후 인공눈물 1방울 + 물 1컵 + 침대 탈출"}, {"time": "오전 09:30 ~ 오전 10:30", "tag": "업무 1차", "title": "재택근무 1차 (1시간 집중 업무)"}, {"time": "오전 10:30 ~ 오전 10:55", "tag": "스트레칭·공부①", "title": "목·어깨 5분 스트레칭 + [공부① 20분] 영어: 독해/리스닝 20분 집중 학습"}, {"time": "오전 11:20 ~ 오후 01:10", "tag": "식사·산책", "title": "건강 식단 식사 + 평지 빠르게 걷기 30~40분 (쿠션화 착용)"}, {"time": "오후 02:30 ~ 오후 03:30", "tag": "업무 2차", "title": "재택근무 2차 (1시간 집중 & 중간에 먼 곳 보며 눈 휴식)"}, {"time": "오후 03:30 ~ 오후 04:00", "tag": "스트레칭·공부②", "title": "어깨·목 스트레칭 5분 + [공부② 20~25분] 한자: 급수 한자 7자 쓰기 및 어휘 확장 20분"}, {"time": "오후 04:30 ~ 오후 06:00", "tag": "저녁·무릎", "title": "저녁 식사(취침 4시간 전 마감) & 벽 스쿼트 30초×3세트"}, {"time": "오후 07:30 ~ 오후 08:30", "tag": "업무 3차", "title": "재택근무 3차 (1시간 집중 업무 & 오늘 업무 마감)"}, {"time": "오후 08:30 ~ 자정 12:20", "tag": "휴식·금식", "title": "따뜻한 물 샤워 및 자유 휴식 (야식 금지, 물 마시기)"}, {"time": "자정 12:20 ~ 새벽 01:00", "tag": "취침 준비", "title": "온열 눈 찜질 5~10분 → 스마트폰 멀리 두고 소등 후 취침"}]}, {"day": 62, "iso": "2027-01-19", "dateLabel": "1월 19일 (화)", "year": 2027, "month": 1, "dayOfMonth": 19, "weekday": "화", "phaseShort": "3개월 차 (9~10주)", "phaseDesc": "오전 9시 기상 & 무릎 근력 강화", "tasks": [{"time": "오전 09:00", "tag": "기상·눈", "title": "기상 직후 인공눈물 1방울 + 물 1컵 + 침대 탈출"}, {"time": "오전 09:30 ~ 오전 10:30", "tag": "업무 1차", "title": "재택근무 1차 (1시간 집중 업무)"}, {"time": "오전 10:30 ~ 오전 10:55", "tag": "스트레칭·공부①", "title": "목·어깨 5분 스트레칭 + [공부① 20분] 일본어: 기초 문법 및 회화 20분 집중 학습"}, {"time": "오전 11:20 ~ 오후 01:10", "tag": "식사·산책", "title": "건강 식단 식사 + 평지 빠르게 걷기 30~40분 (쿠션화 착용)"}, {"time": "오후 02:30 ~ 오후 03:30", "tag": "업무 2차", "title": "재택근무 2차 (1시간 집중 & 중간에 먼 곳 보며 눈 휴식)"}, {"time": "오후 03:30 ~ 오후 04:00", "tag": "스트레칭·공부②", "title": "어깨·목 스트레칭 5분 + [공부② 20~25분] 한국사: 한능검 기본 강의 1강 수강 25분"}, {"time": "오후 04:30 ~ 오후 06:00", "tag": "저녁·무릎", "title": "저녁 식사(취침 4시간 전 마감) & 벽 스쿼트 30초×3세트"}, {"time": "오후 07:30 ~ 오후 08:30", "tag": "업무 3차", "title": "재택근무 3차 (1시간 집중 업무 & 오늘 업무 마감)"}, {"time": "오후 08:30 ~ 자정 12:20", "tag": "휴식·금식", "title": "따뜻한 물 샤워 및 자유 휴식 (야식 금지, 물 마시기)"}, {"time": "자정 12:20 ~ 새벽 01:00", "tag": "취침 준비", "title": "온열 눈 찜질 5~10분 → 스마트폰 멀리 두고 소등 후 취침"}]}, {"day": 63, "iso": "2027-01-20", "dateLabel": "1월 20일 (수)", "year": 2027, "month": 1, "dayOfMonth": 20, "weekday": "수", "phaseShort": "3개월 차 (9~10주)", "phaseDesc": "오전 9시 기상 & 무릎 근력 강화", "tasks": [{"time": "오전 09:00", "tag": "기상·눈", "title": "기상 직후 인공눈물 1방울 + 물 1컵 + 침대 탈출"}, {"time": "오전 09:30 ~ 오전 10:30", "tag": "업무 1차", "title": "재택근무 1차 (1시간 집중 업무)"}, {"time": "오전 10:30 ~ 오전 10:55", "tag": "스트레칭·공부①", "title": "목·어깨 5분 스트레칭 + [공부① 20분] 영어: 쉐도잉 및 필수 어휘 10개 암기 20분"}, {"time": "오전 11:20 ~ 오후 01:10", "tag": "식사·산책", "title": "건강 식단 식사 + 평지 빠르게 걷기 30~40분 (쿠션화 착용)"}, {"time": "오후 02:30 ~ 오후 03:30", "tag": "업무 2차", "title": "재택근무 2차 (1시간 집중 & 중간에 먼 곳 보며 눈 휴식)"}, {"time": "오후 03:30 ~ 오후 04:00", "tag": "스트레칭·공부②", "title": "어깨·목 스트레칭 5분 + [공부② 20~25분] 한자: 기출 한자어 및 사자성어 20분 학습"}, {"time": "오후 04:30 ~ 오후 06:00", "tag": "저녁·무릎", "title": "저녁 식사(취침 4시간 전 마감) & 벽 스쿼트 30초×3세트"}, {"time": "오후 07:30 ~ 오후 08:30", "tag": "업무 3차", "title": "재택근무 3차 (1시간 집중 업무 & 오늘 업무 마감)"}, {"time": "오후 08:30 ~ 자정 12:20", "tag": "휴식·금식", "title": "따뜻한 물 샤워 및 자유 휴식 (야식 금지, 물 마시기)"}, {"time": "자정 12:20 ~ 새벽 01:00", "tag": "취침 준비", "title": "온열 눈 찜질 5~10분 → 스마트폰 멀리 두고 소등 후 취침"}]}, {"day": 64, "iso": "2027-01-21", "dateLabel": "1월 21일 (목)", "year": 2027, "month": 1, "dayOfMonth": 21, "weekday": "목", "phaseShort": "3개월 차 (9~10주)", "phaseDesc": "오전 9시 기상 & 무릎 근력 강화", "tasks": [{"time": "오전 09:00", "tag": "기상·눈", "title": "기상 직후 인공눈물 1방울 + 물 1컵 + 침대 탈출"}, {"time": "오전 09:30 ~ 오전 10:30", "tag": "업무 1차", "title": "재택근무 1차 (1시간 집중 업무)"}, {"time": "오전 10:30 ~ 오전 10:55", "tag": "스트레칭·공부①", "title": "목·어깨 5분 스트레칭 + [공부① 20분] 일본어: JLPT 기초 어휘 및 듣기 20분"}, {"time": "오전 11:20 ~ 오후 01:10", "tag": "식사·산책", "title": "건강 식단 식사 + 평지 빠르게 걷기 30~40분 (쿠션화 착용)"}, {"time": "오후 02:30 ~ 오후 03:30", "tag": "업무 2차", "title": "재택근무 2차 (1시간 집중 & 중간에 먼 곳 보며 눈 휴식)"}, {"time": "오후 03:30 ~ 오후 04:00", "tag": "스트레칭·공부②", "title": "어깨·목 스트레칭 5분 + [공부② 20~25분] 한국사: 시대별 핵심 키워드 정리 25분"}, {"time": "오후 04:30 ~ 오후 06:00", "tag": "저녁·무릎", "title": "저녁 식사(취침 4시간 전 마감) & 벽 스쿼트 30초×3세트"}, {"time": "오후 07:30 ~ 오후 08:30", "tag": "업무 3차", "title": "재택근무 3차 (1시간 집중 업무 & 오늘 업무 마감)"}, {"time": "오후 08:30 ~ 자정 12:20", "tag": "휴식·금식", "title": "따뜻한 물 샤워 및 자유 휴식 (야식 금지, 물 마시기)"}, {"time": "자정 12:20 ~ 새벽 01:00", "tag": "취침 준비", "title": "온열 눈 찜질 5~10분 → 스마트폰 멀리 두고 소등 후 취침"}]}, {"day": 65, "iso": "2027-01-22", "dateLabel": "1월 22일 (금)", "year": 2027, "month": 1, "dayOfMonth": 22, "weekday": "금", "phaseShort": "3개월 차 (9~10주)", "phaseDesc": "오전 9시 기상 & 무릎 근력 강화", "tasks": [{"time": "오전 09:00", "tag": "기상·눈", "title": "기상 직후 인공눈물 1방울 + 물 1컵 + 침대 탈출"}, {"time": "오전 09:30 ~ 오전 10:30", "tag": "업무 1차", "title": "재택근무 1차 (1시간 집중 업무)"}, {"time": "오전 10:30 ~ 오전 10:55", "tag": "스트레칭·공부①", "title": "목·어깨 5분 스트레칭 + [공부① 20분] 영어: 실전 문장 만들기 & 복습 20분"}, {"time": "오전 11:20 ~ 오후 01:10", "tag": "식사·산책", "title": "건강 식단 식사 + 평지 빠르게 걷기 30~40분 (쿠션화 착용)"}, {"time": "오후 02:30 ~ 오후 03:30", "tag": "업무 2차", "title": "재택근무 2차 (1시간 집중 & 중간에 먼 곳 보며 눈 휴식)"}, {"time": "오후 03:30 ~ 오후 04:00", "tag": "스트레칭·공부②", "title": "어깨·목 스트레칭 5분 + [공부② 20~25분] 한자: 주간 학습 한자 테스트 및 복습 20분"}, {"time": "오후 04:30 ~ 오후 06:00", "tag": "저녁·무릎", "title": "저녁 식사(취침 4시간 전 마감) & 벽 스쿼트 30초×3세트"}, {"time": "오후 07:30 ~ 오후 08:30", "tag": "업무 3차", "title": "재택근무 3차 (1시간 집중 업무 & 오늘 업무 마감)"}, {"time": "오후 08:30 ~ 자정 12:20", "tag": "휴식·금식", "title": "따뜻한 물 샤워 및 자유 휴식 (야식 금지, 물 마시기)"}, {"time": "자정 12:20 ~ 새벽 01:00", "tag": "취침 준비", "title": "온열 눈 찜질 5~10분 → 스마트폰 멀리 두고 소등 후 취침"}]}, {"day": 66, "iso": "2027-01-23", "dateLabel": "1월 23일 (토)", "year": 2027, "month": 1, "dayOfMonth": 23, "weekday": "토", "phaseShort": "3개월 차 (9~10주)", "phaseDesc": "오전 9시 기상 & 무릎 근력 강화", "tasks": [{"time": "오전 09:00", "tag": "기상·눈", "title": "기상 직후 인공눈물 1방울 + 물 1컵 + 침대 탈출"}, {"time": "오전 09:30 ~ 오전 10:30", "tag": "업무 1차", "title": "재택근무 1차 (1시간 집중 업무)"}, {"time": "오전 10:30 ~ 오전 10:55", "tag": "스트레칭·공부①", "title": "목·어깨 5분 스트레칭 + [공부① 20분] 일본어: 주간 학습 내용 총복습 20분"}, {"time": "오전 11:20 ~ 오후 01:10", "tag": "식사·산책", "title": "건강 식단 식사 + 평지 빠르게 걷기 30~40분 (쿠션화 착용)"}, {"time": "오후 02:30 ~ 오후 03:30", "tag": "업무 2차", "title": "재택근무 2차 (1시간 집중 & 중간에 먼 곳 보며 눈 휴식)"}, {"time": "오후 03:30 ~ 오후 04:00", "tag": "스트레칭·공부②", "title": "어깨·목 스트레칭 5분 + [공부② 20~25분] 한국사: 기출문제 풀이 및 오답 체크 25분"}, {"time": "오후 04:30 ~ 오후 06:00", "tag": "저녁·무릎", "title": "저녁 식사(취침 4시간 전 마감) & 벽 스쿼트 30초×3세트"}, {"time": "오후 07:30 ~ 오후 08:30", "tag": "업무 3차", "title": "재택근무 3차 (1시간 집중 업무 & 오늘 업무 마감)"}, {"time": "오후 08:30 ~ 자정 12:20", "tag": "휴식·금식", "title": "따뜻한 물 샤워 및 자유 휴식 (야식 금지, 물 마시기)"}, {"time": "자정 12:20 ~ 새벽 01:00", "tag": "취침 준비", "title": "온열 눈 찜질 5~10분 → 스마트폰 멀리 두고 소등 후 취침"}]}, {"day": 67, "iso": "2027-01-24", "dateLabel": "1월 24일 (일)", "year": 2027, "month": 1, "dayOfMonth": 24, "weekday": "일", "phaseShort": "3개월 차 (9~10주)", "phaseDesc": "오전 9시 기상 & 무릎 근력 강화", "tasks": [{"time": "오전 09:00", "tag": "기상·눈", "title": "기상 직후 인공눈물 1방울 + 물 1컵 + 침대 탈출"}, {"time": "오전 09:30 ~ 오전 10:30", "tag": "업무 1차", "title": "재택근무 1차 (1시간 집중 업무)"}, {"time": "오전 10:30 ~ 오전 10:55", "tag": "스트레칭·공부①", "title": "목·어깨 5분 스트레칭 + [공부① 20분] 영어·일본어: 관심 콘텐츠로 가볍게 20분 노출"}, {"time": "오전 11:20 ~ 오후 01:10", "tag": "식사·산책", "title": "건강 식단 식사 + 평지 빠르게 걷기 30~40분 (쿠션화 착용)"}, {"time": "오후 02:30 ~ 오후 03:30", "tag": "업무 2차", "title": "재택근무 2차 (1시간 집중 & 중간에 먼 곳 보며 눈 휴식)"}, {"time": "오후 03:30 ~ 오후 04:00", "tag": "스트레칭·공부②", "title": "어깨·목 스트레칭 5분 + [공부② 20~25분] 전 과목: 한 주간 부족했던 과목 30분 자율 보충"}, {"time": "오후 04:30 ~ 오후 06:00", "tag": "저녁·무릎", "title": "저녁 식사(취침 4시간 전 마감) & 벽 스쿼트 30초×3세트"}, {"time": "오후 07:30 ~ 오후 08:30", "tag": "업무 3차", "title": "재택근무 3차 (1시간 집중 업무 & 오늘 업무 마감)"}, {"time": "오후 08:30 ~ 자정 12:20", "tag": "휴식·금식", "title": "따뜻한 물 샤워 및 자유 휴식 (야식 금지, 물 마시기)"}, {"time": "자정 12:20 ~ 새벽 01:00", "tag": "취침 준비", "title": "온열 눈 찜질 5~10분 → 스마트폰 멀리 두고 소등 후 취침"}]}, {"day": 68, "iso": "2027-01-25", "dateLabel": "1월 25일 (월)", "year": 2027, "month": 1, "dayOfMonth": 25, "weekday": "월", "phaseShort": "3개월 차 (9~10주)", "phaseDesc": "오전 9시 기상 & 무릎 근력 강화", "tasks": [{"time": "오전 09:00", "tag": "기상·눈", "title": "기상 직후 인공눈물 1방울 + 물 1컵 + 침대 탈출"}, {"time": "오전 09:30 ~ 오전 10:30", "tag": "업무 1차", "title": "재택근무 1차 (1시간 집중 업무)"}, {"time": "오전 10:30 ~ 오전 10:55", "tag": "스트레칭·공부①", "title": "목·어깨 5분 스트레칭 + [공부① 20분] 영어: 독해/리스닝 20분 집중 학습"}, {"time": "오전 11:20 ~ 오후 01:10", "tag": "식사·산책", "title": "건강 식단 식사 + 평지 빠르게 걷기 30~40분 (쿠션화 착용)"}, {"time": "오후 02:30 ~ 오후 03:30", "tag": "업무 2차", "title": "재택근무 2차 (1시간 집중 & 중간에 먼 곳 보며 눈 휴식)"}, {"time": "오후 03:30 ~ 오후 04:00", "tag": "스트레칭·공부②", "title": "어깨·목 스트레칭 5분 + [공부② 20~25분] 한자: 급수 한자 7자 쓰기 및 어휘 확장 20분"}, {"time": "오후 04:30 ~ 오후 06:00", "tag": "저녁·무릎", "title": "저녁 식사(취침 4시간 전 마감) & 벽 스쿼트 30초×3세트"}, {"time": "오후 07:30 ~ 오후 08:30", "tag": "업무 3차", "title": "재택근무 3차 (1시간 집중 업무 & 오늘 업무 마감)"}, {"time": "오후 08:30 ~ 자정 12:20", "tag": "휴식·금식", "title": "따뜻한 물 샤워 및 자유 휴식 (야식 금지, 물 마시기)"}, {"time": "자정 12:20 ~ 새벽 01:00", "tag": "취침 준비", "title": "온열 눈 찜질 5~10분 → 스마트폰 멀리 두고 소등 후 취침"}]}, {"day": 69, "iso": "2027-01-26", "dateLabel": "1월 26일 (화)", "year": 2027, "month": 1, "dayOfMonth": 26, "weekday": "화", "phaseShort": "3개월 차 (9~10주)", "phaseDesc": "오전 9시 기상 & 무릎 근력 강화", "tasks": [{"time": "오전 09:00", "tag": "기상·눈", "title": "기상 직후 인공눈물 1방울 + 물 1컵 + 침대 탈출"}, {"time": "오전 09:30 ~ 오전 10:30", "tag": "업무 1차", "title": "재택근무 1차 (1시간 집중 업무)"}, {"time": "오전 10:30 ~ 오전 10:55", "tag": "스트레칭·공부①", "title": "목·어깨 5분 스트레칭 + [공부① 20분] 일본어: 기초 문법 및 회화 20분 집중 학습"}, {"time": "오전 11:20 ~ 오후 01:10", "tag": "식사·산책", "title": "건강 식단 식사 + 평지 빠르게 걷기 30~40분 (쿠션화 착용)"}, {"time": "오후 02:30 ~ 오후 03:30", "tag": "업무 2차", "title": "재택근무 2차 (1시간 집중 & 중간에 먼 곳 보며 눈 휴식)"}, {"time": "오후 03:30 ~ 오후 04:00", "tag": "스트레칭·공부②", "title": "어깨·목 스트레칭 5분 + [공부② 20~25분] 한국사: 한능검 기본 강의 1강 수강 25분"}, {"time": "오후 04:30 ~ 오후 06:00", "tag": "저녁·무릎", "title": "저녁 식사(취침 4시간 전 마감) & 벽 스쿼트 30초×3세트"}, {"time": "오후 07:30 ~ 오후 08:30", "tag": "업무 3차", "title": "재택근무 3차 (1시간 집중 업무 & 오늘 업무 마감)"}, {"time": "오후 08:30 ~ 자정 12:20", "tag": "휴식·금식", "title": "따뜻한 물 샤워 및 자유 휴식 (야식 금지, 물 마시기)"}, {"time": "자정 12:20 ~ 새벽 01:00", "tag": "취침 준비", "title": "온열 눈 찜질 5~10분 → 스마트폰 멀리 두고 소등 후 취침"}]}, {"day": 70, "iso": "2027-01-27", "dateLabel": "1월 27일 (수)", "year": 2027, "month": 1, "dayOfMonth": 27, "weekday": "수", "phaseShort": "3개월 차 (9~10주)", "phaseDesc": "오전 9시 기상 & 무릎 근력 강화", "tasks": [{"time": "오전 09:00", "tag": "기상·눈", "title": "기상 직후 인공눈물 1방울 + 물 1컵 + 침대 탈출"}, {"time": "오전 09:30 ~ 오전 10:30", "tag": "업무 1차", "title": "재택근무 1차 (1시간 집중 업무)"}, {"time": "오전 10:30 ~ 오전 10:55", "tag": "스트레칭·공부①", "title": "목·어깨 5분 스트레칭 + [공부① 20분] 영어: 쉐도잉 및 필수 어휘 10개 암기 20분"}, {"time": "오전 11:20 ~ 오후 01:10", "tag": "식사·산책", "title": "건강 식단 식사 + 평지 빠르게 걷기 30~40분 (쿠션화 착용)"}, {"time": "오후 02:30 ~ 오후 03:30", "tag": "업무 2차", "title": "재택근무 2차 (1시간 집중 & 중간에 먼 곳 보며 눈 휴식)"}, {"time": "오후 03:30 ~ 오후 04:00", "tag": "스트레칭·공부②", "title": "어깨·목 스트레칭 5분 + [공부② 20~25분] 한자: 기출 한자어 및 사자성어 20분 학습"}, {"time": "오후 04:30 ~ 오후 06:00", "tag": "저녁·무릎", "title": "저녁 식사(취침 4시간 전 마감) & 벽 스쿼트 30초×3세트"}, {"time": "오후 07:30 ~ 오후 08:30", "tag": "업무 3차", "title": "재택근무 3차 (1시간 집중 업무 & 오늘 업무 마감)"}, {"time": "오후 08:30 ~ 자정 12:20", "tag": "휴식·금식", "title": "따뜻한 물 샤워 및 자유 휴식 (야식 금지, 물 마시기)"}, {"time": "자정 12:20 ~ 새벽 01:00", "tag": "취침 준비", "title": "온열 눈 찜질 5~10분 → 스마트폰 멀리 두고 소등 후 취침"}]}, {"day": 71, "iso": "2027-01-28", "dateLabel": "1월 28일 (목)", "year": 2027, "month": 1, "dayOfMonth": 28, "weekday": "목", "phaseShort": "3개월 차 (9~10주)", "phaseDesc": "오전 9시 기상 & 무릎 근력 강화", "tasks": [{"time": "오전 09:00", "tag": "기상·눈", "title": "기상 직후 인공눈물 1방울 + 물 1컵 + 침대 탈출"}, {"time": "오전 09:30 ~ 오전 10:30", "tag": "업무 1차", "title": "재택근무 1차 (1시간 집중 업무)"}, {"time": "오전 10:30 ~ 오전 10:55", "tag": "스트레칭·공부①", "title": "목·어깨 5분 스트레칭 + [공부① 20분] 일본어: JLPT 기초 어휘 및 듣기 20분"}, {"time": "오전 11:20 ~ 오후 01:10", "tag": "식사·산책", "title": "건강 식단 식사 + 평지 빠르게 걷기 30~40분 (쿠션화 착용)"}, {"time": "오후 02:30 ~ 오후 03:30", "tag": "업무 2차", "title": "재택근무 2차 (1시간 집중 & 중간에 먼 곳 보며 눈 휴식)"}, {"time": "오후 03:30 ~ 오후 04:00", "tag": "스트레칭·공부②", "title": "어깨·목 스트레칭 5분 + [공부② 20~25분] 한국사: 시대별 핵심 키워드 정리 25분"}, {"time": "오후 04:30 ~ 오후 06:00", "tag": "저녁·무릎", "title": "저녁 식사(취침 4시간 전 마감) & 벽 스쿼트 30초×3세트"}, {"time": "오후 07:30 ~ 오후 08:30", "tag": "업무 3차", "title": "재택근무 3차 (1시간 집중 업무 & 오늘 업무 마감)"}, {"time": "오후 08:30 ~ 자정 12:20", "tag": "휴식·금식", "title": "따뜻한 물 샤워 및 자유 휴식 (야식 금지, 물 마시기)"}, {"time": "자정 12:20 ~ 새벽 01:00", "tag": "취침 준비", "title": "온열 눈 찜질 5~10분 → 스마트폰 멀리 두고 소등 후 취침"}]}, {"day": 72, "iso": "2027-01-29", "dateLabel": "1월 29일 (금)", "year": 2027, "month": 1, "dayOfMonth": 29, "weekday": "금", "phaseShort": "3개월 차 (9~10주)", "phaseDesc": "오전 9시 기상 & 무릎 근력 강화", "tasks": [{"time": "오전 09:00", "tag": "기상·눈", "title": "기상 직후 인공눈물 1방울 + 물 1컵 + 침대 탈출"}, {"time": "오전 09:30 ~ 오전 10:30", "tag": "업무 1차", "title": "재택근무 1차 (1시간 집중 업무)"}, {"time": "오전 10:30 ~ 오전 10:55", "tag": "스트레칭·공부①", "title": "목·어깨 5분 스트레칭 + [공부① 20분] 영어: 실전 문장 만들기 & 복습 20분"}, {"time": "오전 11:20 ~ 오후 01:10", "tag": "식사·산책", "title": "건강 식단 식사 + 평지 빠르게 걷기 30~40분 (쿠션화 착용)"}, {"time": "오후 02:30 ~ 오후 03:30", "tag": "업무 2차", "title": "재택근무 2차 (1시간 집중 & 중간에 먼 곳 보며 눈 휴식)"}, {"time": "오후 03:30 ~ 오후 04:00", "tag": "스트레칭·공부②", "title": "어깨·목 스트레칭 5분 + [공부② 20~25분] 한자: 주간 학습 한자 테스트 및 복습 20분"}, {"time": "오후 04:30 ~ 오후 06:00", "tag": "저녁·무릎", "title": "저녁 식사(취침 4시간 전 마감) & 벽 스쿼트 30초×3세트"}, {"time": "오후 07:30 ~ 오후 08:30", "tag": "업무 3차", "title": "재택근무 3차 (1시간 집중 업무 & 오늘 업무 마감)"}, {"time": "오후 08:30 ~ 자정 12:20", "tag": "휴식·금식", "title": "따뜻한 물 샤워 및 자유 휴식 (야식 금지, 물 마시기)"}, {"time": "자정 12:20 ~ 새벽 01:00", "tag": "취침 준비", "title": "온열 눈 찜질 5~10분 → 스마트폰 멀리 두고 소등 후 취침"}]}, {"day": 73, "iso": "2027-01-30", "dateLabel": "1월 30일 (토)", "year": 2027, "month": 1, "dayOfMonth": 30, "weekday": "토", "phaseShort": "3개월 차 (9~10주)", "phaseDesc": "오전 9시 기상 & 무릎 근력 강화", "tasks": [{"time": "오전 09:00", "tag": "기상·눈", "title": "기상 직후 인공눈물 1방울 + 물 1컵 + 침대 탈출"}, {"time": "오전 09:30 ~ 오전 10:30", "tag": "업무 1차", "title": "재택근무 1차 (1시간 집중 업무)"}, {"time": "오전 10:30 ~ 오전 10:55", "tag": "스트레칭·공부①", "title": "목·어깨 5분 스트레칭 + [공부① 20분] 일본어: 주간 학습 내용 총복습 20분"}, {"time": "오전 11:20 ~ 오후 01:10", "tag": "식사·산책", "title": "건강 식단 식사 + 평지 빠르게 걷기 30~40분 (쿠션화 착용)"}, {"time": "오후 02:30 ~ 오후 03:30", "tag": "업무 2차", "title": "재택근무 2차 (1시간 집중 & 중간에 먼 곳 보며 눈 휴식)"}, {"time": "오후 03:30 ~ 오후 04:00", "tag": "스트레칭·공부②", "title": "어깨·목 스트레칭 5분 + [공부② 20~25분] 한국사: 기출문제 풀이 및 오답 체크 25분"}, {"time": "오후 04:30 ~ 오후 06:00", "tag": "저녁·무릎", "title": "저녁 식사(취침 4시간 전 마감) & 벽 스쿼트 30초×3세트"}, {"time": "오후 07:30 ~ 오후 08:30", "tag": "업무 3차", "title": "재택근무 3차 (1시간 집중 업무 & 오늘 업무 마감)"}, {"time": "오후 08:30 ~ 자정 12:20", "tag": "휴식·금식", "title": "따뜻한 물 샤워 및 자유 휴식 (야식 금지, 물 마시기)"}, {"time": "자정 12:20 ~ 새벽 01:00", "tag": "취침 준비", "title": "온열 눈 찜질 5~10분 → 스마트폰 멀리 두고 소등 후 취침"}]}, {"day": 74, "iso": "2027-01-31", "dateLabel": "1월 31일 (일)", "year": 2027, "month": 1, "dayOfMonth": 31, "weekday": "일", "phaseShort": "3개월 차 (9~10주)", "phaseDesc": "오전 9시 기상 & 무릎 근력 강화", "tasks": [{"time": "오전 09:00", "tag": "기상·눈", "title": "기상 직후 인공눈물 1방울 + 물 1컵 + 침대 탈출"}, {"time": "오전 09:30 ~ 오전 10:30", "tag": "업무 1차", "title": "재택근무 1차 (1시간 집중 업무)"}, {"time": "오전 10:30 ~ 오전 10:55", "tag": "스트레칭·공부①", "title": "목·어깨 5분 스트레칭 + [공부① 20분] 영어·일본어: 관심 콘텐츠로 가볍게 20분 노출"}, {"time": "오전 11:20 ~ 오후 01:10", "tag": "식사·산책", "title": "건강 식단 식사 + 평지 빠르게 걷기 30~40분 (쿠션화 착용)"}, {"time": "오후 02:30 ~ 오후 03:30", "tag": "업무 2차", "title": "재택근무 2차 (1시간 집중 & 중간에 먼 곳 보며 눈 휴식)"}, {"time": "오후 03:30 ~ 오후 04:00", "tag": "스트레칭·공부②", "title": "어깨·목 스트레칭 5분 + [공부② 20~25분] 전 과목: 한 주간 부족했던 과목 30분 자율 보충"}, {"time": "오후 04:30 ~ 오후 06:00", "tag": "저녁·무릎", "title": "저녁 식사(취침 4시간 전 마감) & 벽 스쿼트 30초×3세트"}, {"time": "오후 07:30 ~ 오후 08:30", "tag": "업무 3차", "title": "재택근무 3차 (1시간 집중 업무 & 오늘 업무 마감)"}, {"time": "오후 08:30 ~ 자정 12:20", "tag": "휴식·금식", "title": "따뜻한 물 샤워 및 자유 휴식 (야식 금지, 물 마시기)"}, {"time": "자정 12:20 ~ 새벽 01:00", "tag": "취침 준비", "title": "온열 눈 찜질 5~10분 → 스마트폰 멀리 두고 소등 후 취침"}]}, {"day": 75, "iso": "2027-02-01", "dateLabel": "2월 1일 (월)", "year": 2027, "month": 2, "dayOfMonth": 1, "weekday": "월", "phaseShort": "3개월 차 (9~10주)", "phaseDesc": "오전 9시 기상 & 무릎 근력 강화", "tasks": [{"time": "오전 09:00", "tag": "기상·눈", "title": "기상 직후 인공눈물 1방울 + 물 1컵 + 침대 탈출"}, {"time": "오전 09:30 ~ 오전 10:30", "tag": "업무 1차", "title": "재택근무 1차 (1시간 집중 업무)"}, {"time": "오전 10:30 ~ 오전 10:55", "tag": "스트레칭·공부①", "title": "목·어깨 5분 스트레칭 + [공부① 20분] 영어: 독해/리스닝 20분 집중 학습"}, {"time": "오전 11:20 ~ 오후 01:10", "tag": "식사·산책", "title": "건강 식단 식사 + 평지 빠르게 걷기 30~40분 (쿠션화 착용)"}, {"time": "오후 02:30 ~ 오후 03:30", "tag": "업무 2차", "title": "재택근무 2차 (1시간 집중 & 중간에 먼 곳 보며 눈 휴식)"}, {"time": "오후 03:30 ~ 오후 04:00", "tag": "스트레칭·공부②", "title": "어깨·목 스트레칭 5분 + [공부② 20~25분] 한자: 급수 한자 7자 쓰기 및 어휘 확장 20분"}, {"time": "오후 04:30 ~ 오후 06:00", "tag": "저녁·무릎", "title": "저녁 식사(취침 4시간 전 마감) & 벽 스쿼트 30초×3세트"}, {"time": "오후 07:30 ~ 오후 08:30", "tag": "업무 3차", "title": "재택근무 3차 (1시간 집중 업무 & 오늘 업무 마감)"}, {"time": "오후 08:30 ~ 자정 12:20", "tag": "휴식·금식", "title": "따뜻한 물 샤워 및 자유 휴식 (야식 금지, 물 마시기)"}, {"time": "자정 12:20 ~ 새벽 01:00", "tag": "취침 준비", "title": "온열 눈 찜질 5~10분 → 스마트폰 멀리 두고 소등 후 취침"}]}, {"day": 76, "iso": "2027-02-02", "dateLabel": "2월 2일 (화)", "year": 2027, "month": 2, "dayOfMonth": 2, "weekday": "화", "phaseShort": "3개월 차 (11~12주)", "phaseDesc": "오전 8시 기상 & 건강한 일상 완성", "tasks": [{"time": "오전 08:00", "tag": "기상·눈", "title": "기상 직후 인공눈물 1방울 + 물 1컵 + 침대 탈출"}, {"time": "오전 08:30 ~ 오전 09:30", "tag": "업무 1차", "title": "재택근무 1차 (1시간 집중 업무)"}, {"time": "오전 09:30 ~ 오전 09:55", "tag": "스트레칭·공부①", "title": "목·어깨 5분 스트레칭 + [공부① 20분] 일본어: 기초 문법 및 회화 20분 집중 학습"}, {"time": "오전 10:20 ~ 오후 12:10", "tag": "식사·산책", "title": "건강 식단 식사 + 평지 빠르게 걷기 30~40분 (쿠션화 착용)"}, {"time": "오후 01:30 ~ 오후 02:30", "tag": "업무 2차", "title": "재택근무 2차 (1시간 집중 & 중간에 먼 곳 보며 눈 휴식)"}, {"time": "오후 02:30 ~ 오후 03:00", "tag": "스트레칭·공부②", "title": "어깨·목 스트레칭 5분 + [공부② 20~25분] 한국사: 한능검 기본 강의 1강 수강 25분"}, {"time": "오후 03:30 ~ 오후 05:00", "tag": "저녁·무릎", "title": "저녁 식사(취침 4시간 전 마감) & 벽 스쿼트 30초×3세트"}, {"time": "오후 06:30 ~ 오후 07:30", "tag": "업무 3차", "title": "재택근무 3차 (1시간 집중 업무 & 오늘 업무 마감)"}, {"time": "오후 07:30 ~ 오후 11:20", "tag": "휴식·금식", "title": "따뜻한 물 샤워 및 자유 휴식 (야식 금지, 물 마시기)"}, {"time": "오후 11:20 ~ 자정 12:00", "tag": "취침 준비", "title": "온열 눈 찜질 5~10분 → 스마트폰 멀리 두고 소등 후 취침"}]}, {"day": 77, "iso": "2027-02-03", "dateLabel": "2월 3일 (수)", "year": 2027, "month": 2, "dayOfMonth": 3, "weekday": "수", "phaseShort": "3개월 차 (11~12주)", "phaseDesc": "오전 8시 기상 & 건강한 일상 완성", "tasks": [{"time": "오전 08:00", "tag": "기상·눈", "title": "기상 직후 인공눈물 1방울 + 물 1컵 + 침대 탈출"}, {"time": "오전 08:30 ~ 오전 09:30", "tag": "업무 1차", "title": "재택근무 1차 (1시간 집중 업무)"}, {"time": "오전 09:30 ~ 오전 09:55", "tag": "스트레칭·공부①", "title": "목·어깨 5분 스트레칭 + [공부① 20분] 영어: 쉐도잉 및 필수 어휘 10개 암기 20분"}, {"time": "오전 10:20 ~ 오후 12:10", "tag": "식사·산책", "title": "건강 식단 식사 + 평지 빠르게 걷기 30~40분 (쿠션화 착용)"}, {"time": "오후 01:30 ~ 오후 02:30", "tag": "업무 2차", "title": "재택근무 2차 (1시간 집중 & 중간에 먼 곳 보며 눈 휴식)"}, {"time": "오후 02:30 ~ 오후 03:00", "tag": "스트레칭·공부②", "title": "어깨·목 스트레칭 5분 + [공부② 20~25분] 한자: 기출 한자어 및 사자성어 20분 학습"}, {"time": "오후 03:30 ~ 오후 05:00", "tag": "저녁·무릎", "title": "저녁 식사(취침 4시간 전 마감) & 벽 스쿼트 30초×3세트"}, {"time": "오후 06:30 ~ 오후 07:30", "tag": "업무 3차", "title": "재택근무 3차 (1시간 집중 업무 & 오늘 업무 마감)"}, {"time": "오후 07:30 ~ 오후 11:20", "tag": "휴식·금식", "title": "따뜻한 물 샤워 및 자유 휴식 (야식 금지, 물 마시기)"}, {"time": "오후 11:20 ~ 자정 12:00", "tag": "취침 준비", "title": "온열 눈 찜질 5~10분 → 스마트폰 멀리 두고 소등 후 취침"}]}, {"day": 78, "iso": "2027-02-04", "dateLabel": "2월 4일 (목)", "year": 2027, "month": 2, "dayOfMonth": 4, "weekday": "목", "phaseShort": "3개월 차 (11~12주)", "phaseDesc": "오전 8시 기상 & 건강한 일상 완성", "tasks": [{"time": "오전 08:00", "tag": "기상·눈", "title": "기상 직후 인공눈물 1방울 + 물 1컵 + 침대 탈출"}, {"time": "오전 08:30 ~ 오전 09:30", "tag": "업무 1차", "title": "재택근무 1차 (1시간 집중 업무)"}, {"time": "오전 09:30 ~ 오전 09:55", "tag": "스트레칭·공부①", "title": "목·어깨 5분 스트레칭 + [공부① 20분] 일본어: JLPT 기초 어휘 및 듣기 20분"}, {"time": "오전 10:20 ~ 오후 12:10", "tag": "식사·산책", "title": "건강 식단 식사 + 평지 빠르게 걷기 30~40분 (쿠션화 착용)"}, {"time": "오후 01:30 ~ 오후 02:30", "tag": "업무 2차", "title": "재택근무 2차 (1시간 집중 & 중간에 먼 곳 보며 눈 휴식)"}, {"time": "오후 02:30 ~ 오후 03:00", "tag": "스트레칭·공부②", "title": "어깨·목 스트레칭 5분 + [공부② 20~25분] 한국사: 시대별 핵심 키워드 정리 25분"}, {"time": "오후 03:30 ~ 오후 05:00", "tag": "저녁·무릎", "title": "저녁 식사(취침 4시간 전 마감) & 벽 스쿼트 30초×3세트"}, {"time": "오후 06:30 ~ 오후 07:30", "tag": "업무 3차", "title": "재택근무 3차 (1시간 집중 업무 & 오늘 업무 마감)"}, {"time": "오후 07:30 ~ 오후 11:20", "tag": "휴식·금식", "title": "따뜻한 물 샤워 및 자유 휴식 (야식 금지, 물 마시기)"}, {"time": "오후 11:20 ~ 자정 12:00", "tag": "취침 준비", "title": "온열 눈 찜질 5~10분 → 스마트폰 멀리 두고 소등 후 취침"}]}, {"day": 79, "iso": "2027-02-05", "dateLabel": "2월 5일 (금)", "year": 2027, "month": 2, "dayOfMonth": 5, "weekday": "금", "phaseShort": "3개월 차 (11~12주)", "phaseDesc": "오전 8시 기상 & 건강한 일상 완성", "tasks": [{"time": "오전 08:00", "tag": "기상·눈", "title": "기상 직후 인공눈물 1방울 + 물 1컵 + 침대 탈출"}, {"time": "오전 08:30 ~ 오전 09:30", "tag": "업무 1차", "title": "재택근무 1차 (1시간 집중 업무)"}, {"time": "오전 09:30 ~ 오전 09:55", "tag": "스트레칭·공부①", "title": "목·어깨 5분 스트레칭 + [공부① 20분] 영어: 실전 문장 만들기 & 복습 20분"}, {"time": "오전 10:20 ~ 오후 12:10", "tag": "식사·산책", "title": "건강 식단 식사 + 평지 빠르게 걷기 30~40분 (쿠션화 착용)"}, {"time": "오후 01:30 ~ 오후 02:30", "tag": "업무 2차", "title": "재택근무 2차 (1시간 집중 & 중간에 먼 곳 보며 눈 휴식)"}, {"time": "오후 02:30 ~ 오후 03:00", "tag": "스트레칭·공부②", "title": "어깨·목 스트레칭 5분 + [공부② 20~25분] 한자: 주간 학습 한자 테스트 및 복습 20분"}, {"time": "오후 03:30 ~ 오후 05:00", "tag": "저녁·무릎", "title": "저녁 식사(취침 4시간 전 마감) & 벽 스쿼트 30초×3세트"}, {"time": "오후 06:30 ~ 오후 07:30", "tag": "업무 3차", "title": "재택근무 3차 (1시간 집중 업무 & 오늘 업무 마감)"}, {"time": "오후 07:30 ~ 오후 11:20", "tag": "휴식·금식", "title": "따뜻한 물 샤워 및 자유 휴식 (야식 금지, 물 마시기)"}, {"time": "오후 11:20 ~ 자정 12:00", "tag": "취침 준비", "title": "온열 눈 찜질 5~10분 → 스마트폰 멀리 두고 소등 후 취침"}]}, {"day": 80, "iso": "2027-02-06", "dateLabel": "2월 6일 (토)", "year": 2027, "month": 2, "dayOfMonth": 6, "weekday": "토", "phaseShort": "3개월 차 (11~12주)", "phaseDesc": "오전 8시 기상 & 건강한 일상 완성", "tasks": [{"time": "오전 08:00", "tag": "기상·눈", "title": "기상 직후 인공눈물 1방울 + 물 1컵 + 침대 탈출"}, {"time": "오전 08:30 ~ 오전 09:30", "tag": "업무 1차", "title": "재택근무 1차 (1시간 집중 업무)"}, {"time": "오전 09:30 ~ 오전 09:55", "tag": "스트레칭·공부①", "title": "목·어깨 5분 스트레칭 + [공부① 20분] 일본어: 주간 학습 내용 총복습 20분"}, {"time": "오전 10:20 ~ 오후 12:10", "tag": "식사·산책", "title": "건강 식단 식사 + 평지 빠르게 걷기 30~40분 (쿠션화 착용)"}, {"time": "오후 01:30 ~ 오후 02:30", "tag": "업무 2차", "title": "재택근무 2차 (1시간 집중 & 중간에 먼 곳 보며 눈 휴식)"}, {"time": "오후 02:30 ~ 오후 03:00", "tag": "스트레칭·공부②", "title": "어깨·목 스트레칭 5분 + [공부② 20~25분] 한국사: 기출문제 풀이 및 오답 체크 25분"}, {"time": "오후 03:30 ~ 오후 05:00", "tag": "저녁·무릎", "title": "저녁 식사(취침 4시간 전 마감) & 벽 스쿼트 30초×3세트"}, {"time": "오후 06:30 ~ 오후 07:30", "tag": "업무 3차", "title": "재택근무 3차 (1시간 집중 업무 & 오늘 업무 마감)"}, {"time": "오후 07:30 ~ 오후 11:20", "tag": "휴식·금식", "title": "따뜻한 물 샤워 및 자유 휴식 (야식 금지, 물 마시기)"}, {"time": "오후 11:20 ~ 자정 12:00", "tag": "취침 준비", "title": "온열 눈 찜질 5~10분 → 스마트폰 멀리 두고 소등 후 취침"}]}, {"day": 81, "iso": "2027-02-07", "dateLabel": "2월 7일 (일)", "year": 2027, "month": 2, "dayOfMonth": 7, "weekday": "일", "phaseShort": "3개월 차 (11~12주)", "phaseDesc": "오전 8시 기상 & 건강한 일상 완성", "tasks": [{"time": "오전 08:00", "tag": "기상·눈", "title": "기상 직후 인공눈물 1방울 + 물 1컵 + 침대 탈출"}, {"time": "오전 08:30 ~ 오전 09:30", "tag": "업무 1차", "title": "재택근무 1차 (1시간 집중 업무)"}, {"time": "오전 09:30 ~ 오전 09:55", "tag": "스트레칭·공부①", "title": "목·어깨 5분 스트레칭 + [공부① 20분] 영어·일본어: 관심 콘텐츠로 가볍게 20분 노출"}, {"time": "오전 10:20 ~ 오후 12:10", "tag": "식사·산책", "title": "건강 식단 식사 + 평지 빠르게 걷기 30~40분 (쿠션화 착용)"}, {"time": "오후 01:30 ~ 오후 02:30", "tag": "업무 2차", "title": "재택근무 2차 (1시간 집중 & 중간에 먼 곳 보며 눈 휴식)"}, {"time": "오후 02:30 ~ 오후 03:00", "tag": "스트레칭·공부②", "title": "어깨·목 스트레칭 5분 + [공부② 20~25분] 전 과목: 한 주간 부족했던 과목 30분 자율 보충"}, {"time": "오후 03:30 ~ 오후 05:00", "tag": "저녁·무릎", "title": "저녁 식사(취침 4시간 전 마감) & 벽 스쿼트 30초×3세트"}, {"time": "오후 06:30 ~ 오후 07:30", "tag": "업무 3차", "title": "재택근무 3차 (1시간 집중 업무 & 오늘 업무 마감)"}, {"time": "오후 07:30 ~ 오후 11:20", "tag": "휴식·금식", "title": "따뜻한 물 샤워 및 자유 휴식 (야식 금지, 물 마시기)"}, {"time": "오후 11:20 ~ 자정 12:00", "tag": "취침 준비", "title": "온열 눈 찜질 5~10분 → 스마트폰 멀리 두고 소등 후 취침"}]}, {"day": 82, "iso": "2027-02-08", "dateLabel": "2월 8일 (월)", "year": 2027, "month": 2, "dayOfMonth": 8, "weekday": "월", "phaseShort": "3개월 차 (11~12주)", "phaseDesc": "오전 8시 기상 & 건강한 일상 완성", "tasks": [{"time": "오전 08:00", "tag": "기상·눈", "title": "기상 직후 인공눈물 1방울 + 물 1컵 + 침대 탈출"}, {"time": "오전 08:30 ~ 오전 09:30", "tag": "업무 1차", "title": "재택근무 1차 (1시간 집중 업무)"}, {"time": "오전 09:30 ~ 오전 09:55", "tag": "스트레칭·공부①", "title": "목·어깨 5분 스트레칭 + [공부① 20분] 영어: 독해/리스닝 20분 집중 학습"}, {"time": "오전 10:20 ~ 오후 12:10", "tag": "식사·산책", "title": "건강 식단 식사 + 평지 빠르게 걷기 30~40분 (쿠션화 착용)"}, {"time": "오후 01:30 ~ 오후 02:30", "tag": "업무 2차", "title": "재택근무 2차 (1시간 집중 & 중간에 먼 곳 보며 눈 휴식)"}, {"time": "오후 02:30 ~ 오후 03:00", "tag": "스트레칭·공부②", "title": "어깨·목 스트레칭 5분 + [공부② 20~25분] 한자: 급수 한자 7자 쓰기 및 어휘 확장 20분"}, {"time": "오후 03:30 ~ 오후 05:00", "tag": "저녁·무릎", "title": "저녁 식사(취침 4시간 전 마감) & 벽 스쿼트 30초×3세트"}, {"time": "오후 06:30 ~ 오후 07:30", "tag": "업무 3차", "title": "재택근무 3차 (1시간 집중 업무 & 오늘 업무 마감)"}, {"time": "오후 07:30 ~ 오후 11:20", "tag": "휴식·금식", "title": "따뜻한 물 샤워 및 자유 휴식 (야식 금지, 물 마시기)"}, {"time": "오후 11:20 ~ 자정 12:00", "tag": "취침 준비", "title": "온열 눈 찜질 5~10분 → 스마트폰 멀리 두고 소등 후 취침"}]}, {"day": 83, "iso": "2027-02-09", "dateLabel": "2월 9일 (화)", "year": 2027, "month": 2, "dayOfMonth": 9, "weekday": "화", "phaseShort": "3개월 차 (11~12주)", "phaseDesc": "오전 8시 기상 & 건강한 일상 완성", "tasks": [{"time": "오전 08:00", "tag": "기상·눈", "title": "기상 직후 인공눈물 1방울 + 물 1컵 + 침대 탈출"}, {"time": "오전 08:30 ~ 오전 09:30", "tag": "업무 1차", "title": "재택근무 1차 (1시간 집중 업무)"}, {"time": "오전 09:30 ~ 오전 09:55", "tag": "스트레칭·공부①", "title": "목·어깨 5분 스트레칭 + [공부① 20분] 일본어: 기초 문법 및 회화 20분 집중 학습"}, {"time": "오전 10:20 ~ 오후 12:10", "tag": "식사·산책", "title": "건강 식단 식사 + 평지 빠르게 걷기 30~40분 (쿠션화 착용)"}, {"time": "오후 01:30 ~ 오후 02:30", "tag": "업무 2차", "title": "재택근무 2차 (1시간 집중 & 중간에 먼 곳 보며 눈 휴식)"}, {"time": "오후 02:30 ~ 오후 03:00", "tag": "스트레칭·공부②", "title": "어깨·목 스트레칭 5분 + [공부② 20~25분] 한국사: 한능검 기본 강의 1강 수강 25분"}, {"time": "오후 03:30 ~ 오후 05:00", "tag": "저녁·무릎", "title": "저녁 식사(취침 4시간 전 마감) & 벽 스쿼트 30초×3세트"}, {"time": "오후 06:30 ~ 오후 07:30", "tag": "업무 3차", "title": "재택근무 3차 (1시간 집중 업무 & 오늘 업무 마감)"}, {"time": "오후 07:30 ~ 오후 11:20", "tag": "휴식·금식", "title": "따뜻한 물 샤워 및 자유 휴식 (야식 금지, 물 마시기)"}, {"time": "오후 11:20 ~ 자정 12:00", "tag": "취침 준비", "title": "온열 눈 찜질 5~10분 → 스마트폰 멀리 두고 소등 후 취침"}]}, {"day": 84, "iso": "2027-02-10", "dateLabel": "2월 10일 (수)", "year": 2027, "month": 2, "dayOfMonth": 10, "weekday": "수", "phaseShort": "3개월 차 (11~12주)", "phaseDesc": "오전 8시 기상 & 건강한 일상 완성", "tasks": [{"time": "오전 08:00", "tag": "기상·눈", "title": "기상 직후 인공눈물 1방울 + 물 1컵 + 침대 탈출"}, {"time": "오전 08:30 ~ 오전 09:30", "tag": "업무 1차", "title": "재택근무 1차 (1시간 집중 업무)"}, {"time": "오전 09:30 ~ 오전 09:55", "tag": "스트레칭·공부①", "title": "목·어깨 5분 스트레칭 + [공부① 20분] 영어: 쉐도잉 및 필수 어휘 10개 암기 20분"}, {"time": "오전 10:20 ~ 오후 12:10", "tag": "식사·산책", "title": "건강 식단 식사 + 평지 빠르게 걷기 30~40분 (쿠션화 착용)"}, {"time": "오후 01:30 ~ 오후 02:30", "tag": "업무 2차", "title": "재택근무 2차 (1시간 집중 & 중간에 먼 곳 보며 눈 휴식)"}, {"time": "오후 02:30 ~ 오후 03:00", "tag": "스트레칭·공부②", "title": "어깨·목 스트레칭 5분 + [공부② 20~25분] 한자: 기출 한자어 및 사자성어 20분 학습"}, {"time": "오후 03:30 ~ 오후 05:00", "tag": "저녁·무릎", "title": "저녁 식사(취침 4시간 전 마감) & 벽 스쿼트 30초×3세트"}, {"time": "오후 06:30 ~ 오후 07:30", "tag": "업무 3차", "title": "재택근무 3차 (1시간 집중 업무 & 오늘 업무 마감)"}, {"time": "오후 07:30 ~ 오후 11:20", "tag": "휴식·금식", "title": "따뜻한 물 샤워 및 자유 휴식 (야식 금지, 물 마시기)"}, {"time": "오후 11:20 ~ 자정 12:00", "tag": "취침 준비", "title": "온열 눈 찜질 5~10분 → 스마트폰 멀리 두고 소등 후 취침"}]}, {"day": 85, "iso": "2027-02-11", "dateLabel": "2월 11일 (목)", "year": 2027, "month": 2, "dayOfMonth": 11, "weekday": "목", "phaseShort": "3개월 차 (11~12주)", "phaseDesc": "오전 8시 기상 & 건강한 일상 완성", "tasks": [{"time": "오전 08:00", "tag": "기상·눈", "title": "기상 직후 인공눈물 1방울 + 물 1컵 + 침대 탈출"}, {"time": "오전 08:30 ~ 오전 09:30", "tag": "업무 1차", "title": "재택근무 1차 (1시간 집중 업무)"}, {"time": "오전 09:30 ~ 오전 09:55", "tag": "스트레칭·공부①", "title": "목·어깨 5분 스트레칭 + [공부① 20분] 일본어: JLPT 기초 어휘 및 듣기 20분"}, {"time": "오전 10:20 ~ 오후 12:10", "tag": "식사·산책", "title": "건강 식단 식사 + 평지 빠르게 걷기 30~40분 (쿠션화 착용)"}, {"time": "오후 01:30 ~ 오후 02:30", "tag": "업무 2차", "title": "재택근무 2차 (1시간 집중 & 중간에 먼 곳 보며 눈 휴식)"}, {"time": "오후 02:30 ~ 오후 03:00", "tag": "스트레칭·공부②", "title": "어깨·목 스트레칭 5분 + [공부② 20~25분] 한국사: 시대별 핵심 키워드 정리 25분"}, {"time": "오후 03:30 ~ 오후 05:00", "tag": "저녁·무릎", "title": "저녁 식사(취침 4시간 전 마감) & 벽 스쿼트 30초×3세트"}, {"time": "오후 06:30 ~ 오후 07:30", "tag": "업무 3차", "title": "재택근무 3차 (1시간 집중 업무 & 오늘 업무 마감)"}, {"time": "오후 07:30 ~ 오후 11:20", "tag": "휴식·금식", "title": "따뜻한 물 샤워 및 자유 휴식 (야식 금지, 물 마시기)"}, {"time": "오후 11:20 ~ 자정 12:00", "tag": "취침 준비", "title": "온열 눈 찜질 5~10분 → 스마트폰 멀리 두고 소등 후 취침"}]}, {"day": 86, "iso": "2027-02-12", "dateLabel": "2월 12일 (금)", "year": 2027, "month": 2, "dayOfMonth": 12, "weekday": "금", "phaseShort": "3개월 차 (11~12주)", "phaseDesc": "오전 8시 기상 & 건강한 일상 완성", "tasks": [{"time": "오전 08:00", "tag": "기상·눈", "title": "기상 직후 인공눈물 1방울 + 물 1컵 + 침대 탈출"}, {"time": "오전 08:30 ~ 오전 09:30", "tag": "업무 1차", "title": "재택근무 1차 (1시간 집중 업무)"}, {"time": "오전 09:30 ~ 오전 09:55", "tag": "스트레칭·공부①", "title": "목·어깨 5분 스트레칭 + [공부① 20분] 영어: 실전 문장 만들기 & 복습 20분"}, {"time": "오전 10:20 ~ 오후 12:10", "tag": "식사·산책", "title": "건강 식단 식사 + 평지 빠르게 걷기 30~40분 (쿠션화 착용)"}, {"time": "오후 01:30 ~ 오후 02:30", "tag": "업무 2차", "title": "재택근무 2차 (1시간 집중 & 중간에 먼 곳 보며 눈 휴식)"}, {"time": "오후 02:30 ~ 오후 03:00", "tag": "스트레칭·공부②", "title": "어깨·목 스트레칭 5분 + [공부② 20~25분] 한자: 주간 학습 한자 테스트 및 복습 20분"}, {"time": "오후 03:30 ~ 오후 05:00", "tag": "저녁·무릎", "title": "저녁 식사(취침 4시간 전 마감) & 벽 스쿼트 30초×3세트"}, {"time": "오후 06:30 ~ 오후 07:30", "tag": "업무 3차", "title": "재택근무 3차 (1시간 집중 업무 & 오늘 업무 마감)"}, {"time": "오후 07:30 ~ 오후 11:20", "tag": "휴식·금식", "title": "따뜻한 물 샤워 및 자유 휴식 (야식 금지, 물 마시기)"}, {"time": "오후 11:20 ~ 자정 12:00", "tag": "취침 준비", "title": "온열 눈 찜질 5~10분 → 스마트폰 멀리 두고 소등 후 취침"}]}, {"day": 87, "iso": "2027-02-13", "dateLabel": "2월 13일 (토)", "year": 2027, "month": 2, "dayOfMonth": 13, "weekday": "토", "phaseShort": "3개월 차 (11~12주)", "phaseDesc": "오전 8시 기상 & 건강한 일상 완성", "tasks": [{"time": "오전 08:00", "tag": "기상·눈", "title": "기상 직후 인공눈물 1방울 + 물 1컵 + 침대 탈출"}, {"time": "오전 08:30 ~ 오전 09:30", "tag": "업무 1차", "title": "재택근무 1차 (1시간 집중 업무)"}, {"time": "오전 09:30 ~ 오전 09:55", "tag": "스트레칭·공부①", "title": "목·어깨 5분 스트레칭 + [공부① 20분] 일본어: 주간 학습 내용 총복습 20분"}, {"time": "오전 10:20 ~ 오후 12:10", "tag": "식사·산책", "title": "건강 식단 식사 + 평지 빠르게 걷기 30~40분 (쿠션화 착용)"}, {"time": "오후 01:30 ~ 오후 02:30", "tag": "업무 2차", "title": "재택근무 2차 (1시간 집중 & 중간에 먼 곳 보며 눈 휴식)"}, {"time": "오후 02:30 ~ 오후 03:00", "tag": "스트레칭·공부②", "title": "어깨·목 스트레칭 5분 + [공부② 20~25분] 한국사: 기출문제 풀이 및 오답 체크 25분"}, {"time": "오후 03:30 ~ 오후 05:00", "tag": "저녁·무릎", "title": "저녁 식사(취침 4시간 전 마감) & 벽 스쿼트 30초×3세트"}, {"time": "오후 06:30 ~ 오후 07:30", "tag": "업무 3차", "title": "재택근무 3차 (1시간 집중 업무 & 오늘 업무 마감)"}, {"time": "오후 07:30 ~ 오후 11:20", "tag": "휴식·금식", "title": "따뜻한 물 샤워 및 자유 휴식 (야식 금지, 물 마시기)"}, {"time": "오후 11:20 ~ 자정 12:00", "tag": "취침 준비", "title": "온열 눈 찜질 5~10분 → 스마트폰 멀리 두고 소등 후 취침"}]}, {"day": 88, "iso": "2027-02-14", "dateLabel": "2월 14일 (일)", "year": 2027, "month": 2, "dayOfMonth": 14, "weekday": "일", "phaseShort": "3개월 차 (11~12주)", "phaseDesc": "오전 8시 기상 & 건강한 일상 완성", "tasks": [{"time": "오전 08:00", "tag": "기상·눈", "title": "기상 직후 인공눈물 1방울 + 물 1컵 + 침대 탈출"}, {"time": "오전 08:30 ~ 오전 09:30", "tag": "업무 1차", "title": "재택근무 1차 (1시간 집중 업무)"}, {"time": "오전 09:30 ~ 오전 09:55", "tag": "스트레칭·공부①", "title": "목·어깨 5분 스트레칭 + [공부① 20분] 영어·일본어: 관심 콘텐츠로 가볍게 20분 노출"}, {"time": "오전 10:20 ~ 오후 12:10", "tag": "식사·산책", "title": "건강 식단 식사 + 평지 빠르게 걷기 30~40분 (쿠션화 착용)"}, {"time": "오후 01:30 ~ 오후 02:30", "tag": "업무 2차", "title": "재택근무 2차 (1시간 집중 & 중간에 먼 곳 보며 눈 휴식)"}, {"time": "오후 02:30 ~ 오후 03:00", "tag": "스트레칭·공부②", "title": "어깨·목 스트레칭 5분 + [공부② 20~25분] 전 과목: 한 주간 부족했던 과목 30분 자율 보충"}, {"time": "오후 03:30 ~ 오후 05:00", "tag": "저녁·무릎", "title": "저녁 식사(취침 4시간 전 마감) & 벽 스쿼트 30초×3세트"}, {"time": "오후 06:30 ~ 오후 07:30", "tag": "업무 3차", "title": "재택근무 3차 (1시간 집중 업무 & 오늘 업무 마감)"}, {"time": "오후 07:30 ~ 오후 11:20", "tag": "휴식·금식", "title": "따뜻한 물 샤워 및 자유 휴식 (야식 금지, 물 마시기)"}, {"time": "오후 11:20 ~ 자정 12:00", "tag": "취침 준비", "title": "온열 눈 찜질 5~10분 → 스마트폰 멀리 두고 소등 후 취침"}]}, {"day": 89, "iso": "2027-02-15", "dateLabel": "2월 15일 (월)", "year": 2027, "month": 2, "dayOfMonth": 15, "weekday": "월", "phaseShort": "3개월 차 (11~12주)", "phaseDesc": "오전 8시 기상 & 건강한 일상 완성", "tasks": [{"time": "오전 08:00", "tag": "기상·눈", "title": "기상 직후 인공눈물 1방울 + 물 1컵 + 침대 탈출"}, {"time": "오전 08:30 ~ 오전 09:30", "tag": "업무 1차", "title": "재택근무 1차 (1시간 집중 업무)"}, {"time": "오전 09:30 ~ 오전 09:55", "tag": "스트레칭·공부①", "title": "목·어깨 5분 스트레칭 + [공부① 20분] 영어: 독해/리스닝 20분 집중 학습"}, {"time": "오전 10:20 ~ 오후 12:10", "tag": "식사·산책", "title": "건강 식단 식사 + 평지 빠르게 걷기 30~40분 (쿠션화 착용)"}, {"time": "오후 01:30 ~ 오후 02:30", "tag": "업무 2차", "title": "재택근무 2차 (1시간 집중 & 중간에 먼 곳 보며 눈 휴식)"}, {"time": "오후 02:30 ~ 오후 03:00", "tag": "스트레칭·공부②", "title": "어깨·목 스트레칭 5분 + [공부② 20~25분] 한자: 급수 한자 7자 쓰기 및 어휘 확장 20분"}, {"time": "오후 03:30 ~ 오후 05:00", "tag": "저녁·무릎", "title": "저녁 식사(취침 4시간 전 마감) & 벽 스쿼트 30초×3세트"}, {"time": "오후 06:30 ~ 오후 07:30", "tag": "업무 3차", "title": "재택근무 3차 (1시간 집중 업무 & 오늘 업무 마감)"}, {"time": "오후 07:30 ~ 오후 11:20", "tag": "휴식·금식", "title": "따뜻한 물 샤워 및 자유 휴식 (야식 금지, 물 마시기)"}, {"time": "오후 11:20 ~ 자정 12:00", "tag": "취침 준비", "title": "온열 눈 찜질 5~10분 → 스마트폰 멀리 두고 소등 후 취침"}]}, {"day": 90, "iso": "2027-02-16", "dateLabel": "2월 16일 (화)", "year": 2027, "month": 2, "dayOfMonth": 16, "weekday": "화", "phaseShort": "3개월 차 (11~12주)", "phaseDesc": "오전 8시 기상 & 건강한 일상 완성", "tasks": [{"time": "오전 08:00", "tag": "기상·눈", "title": "기상 직후 인공눈물 1방울 + 물 1컵 + 침대 탈출"}, {"time": "오전 08:30 ~ 오전 09:30", "tag": "업무 1차", "title": "재택근무 1차 (1시간 집중 업무)"}, {"time": "오전 09:30 ~ 오전 09:55", "tag": "스트레칭·공부①", "title": "목·어깨 5분 스트레칭 + [공부① 20분] 일본어: 기초 문법 및 회화 20분 집중 학습"}, {"time": "오전 10:20 ~ 오후 12:10", "tag": "식사·산책", "title": "건강 식단 식사 + 평지 빠르게 걷기 30~40분 (쿠션화 착용)"}, {"time": "오후 01:30 ~ 오후 02:30", "tag": "업무 2차", "title": "재택근무 2차 (1시간 집중 & 중간에 먼 곳 보며 눈 휴식)"}, {"time": "오후 02:30 ~ 오후 03:00", "tag": "스트레칭·공부②", "title": "어깨·목 스트레칭 5분 + [공부② 20~25분] 한국사: 한능검 기본 강의 1강 수강 25분"}, {"time": "오후 03:30 ~ 오후 05:00", "tag": "저녁·무릎", "title": "저녁 식사(취침 4시간 전 마감) & 벽 스쿼트 30초×3세트"}, {"time": "오후 06:30 ~ 오후 07:30", "tag": "업무 3차", "title": "재택근무 3차 (1시간 집중 업무 & 오늘 업무 마감)"}, {"time": "오후 07:30 ~ 오후 11:20", "tag": "휴식·금식", "title": "따뜻한 물 샤워 및 자유 휴식 (야식 금지, 물 마시기)"}, {"time": "오후 11:20 ~ 자정 12:00", "tag": "취침 준비", "title": "온열 눈 찜질 5~10분 → 스마트폰 멀리 두고 소등 후 취침"}]}];
+const STORAGE_KEY = "planner_90days_v1";
+
+let state = {
+  currentDay: 1,
+  checks: {},
+  memos: {}
+};
+
+function loadState() {
+  try {
+    const saved = localStorage.getItem(STORAGE_KEY);
+    if (saved) {
+      const parsed = JSON.parse(saved);
+      state.checks = parsed.checks || {};
+      state.memos = parsed.memos || {};
+      if (parsed.currentDay) state.currentDay = parsed.currentDay;
+    } else {
+      // 오늘 날짜가 90일 범위 내면 자동 선택
+      const todayIso = new Date().toISOString().slice(0, 10);
+      const found = DAYS_DATA.find(d => d.iso === todayIso);
+      if (found) state.currentDay = found.day;
+    }
+  } catch (e) {}
+}
+
+function saveState() {
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+  } catch (e) {}
+}
+
+function initSelect() {
+  const sel = document.getElementById("daySelect");
+  sel.innerHTML = DAYS_DATA.map(d =>
+    `<option value="${d.day}">DAY ${String(d.day).padStart(2, '0')} · ${d.dateLabel}</option>`
+  ).join("");
+}
+
+function renderDay(dayNum) {
+  state.currentDay = dayNum;
+  saveState();
+
+  const data = DAYS_DATA[dayNum - 1];
+  document.getElementById("daySelect").value = dayNum;
+  document.getElementById("prevBtn").disabled = (dayNum <= 1);
+  document.getElementById("nextBtn").disabled = (dayNum >= DAYS_DATA.length);
+
+  document.getElementById("phaseShort").textContent = data.phaseShort;
+  document.getElementById("phaseDesc").textContent = data.phaseDesc;
+
+  const dayChecks = state.checks[dayNum] || {};
+  const listEl = document.getElementById("taskList");
+  listEl.innerHTML = data.tasks.map((t, idx) => {
+    const isDone = !!dayChecks[idx];
+    const isWork = t.tag.includes("업무");
+    return `
+      <div class="task-item ${isWork ? 'work-item' : ''} ${isDone ? 'done' : ''}" onclick="toggleTask(${dayNum}, ${idx})">
+        <div class="checkbox-box">
+          <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"></polyline></svg>
+        </div>
+        <div class="task-content">
+          <div class="task-meta">
+            <span class="task-time">${t.time}</span>
+            <span class="task-tag">${t.tag}</span>
+          </div>
+          <div class="task-title">${t.title}</div>
+        </div>
+      </div>
+    `;
+  }).join("");
+
+  const total = data.tasks.length;
+  const doneCount = Object.values(dayChecks).filter(Boolean).length;
+  const pct = Math.round((doneCount / total) * 100);
+  document.getElementById("progressText").textContent = `${doneCount} / ${total} (${pct}%)`;
+  document.getElementById("progressBar").style.width = `${pct}%`;
+
+  document.getElementById("dailyMemo").value = state.memos[dayNum] || "";
+}
+
+function toggleTask(dayNum, idx) {
+  if (!state.checks[dayNum]) state.checks[dayNum] = {};
+  state.checks[dayNum][idx] = !state.checks[dayNum][idx];
+  saveState();
+  renderDay(dayNum);
+}
+
+function saveMemo() {
+  const val = document.getElementById("dailyMemo").value;
+  state.memos[state.currentDay] = val;
+  saveState();
+}
+
+function selectDay(dayNum) {
+  renderDay(dayNum);
+}
+
+function changeDay(delta) {
+  const next = state.currentDay + delta;
+  if (next >= 1 && next <= DAYS_DATA.length) {
+    renderDay(next);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+}
+
+function renderGrid() {
+  const grid = document.getElementById("dayGrid");
+  grid.innerHTML = DAYS_DATA.map(d => {
+    const dayChecks = state.checks[d.day] || {};
+    const doneCount = Object.values(dayChecks).filter(Boolean).length;
+    const total = d.tasks.length;
+    const isCompleted = doneCount === total;
+    const isActive = d.day === state.currentDay;
+    return `
+      <div class="day-cell ${isActive ? 'active' : ''} ${isCompleted ? 'completed' : ''}" onclick="pickFromGrid(${d.day})">
+        <div class="day-cell-num">D-${d.day}</div>
+        <div class="day-cell-date">${d.month}/${d.dayOfMonth}(${d.weekday})</div>
+        <div class="day-cell-stat">${doneCount}/${total}</div>
+      </div>
+    `;
+  }).join("");
+}
+
+function pickFromGrid(dayNum) {
+  closeModal('gridModal');
+  renderDay(dayNum);
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function openModal(id) {
+  if (id === 'gridModal') renderGrid();
+  document.getElementById(id).classList.add('open');
+}
+
+function closeModal(id) {
+  document.getElementById(id).classList.remove('open');
+}
+
+function closeModalOnBg(e, id) {
+  if (e.target.id === id) closeModal(id);
+}
+
+loadState();
+initSelect();
+renderDay(state.currentDay);
+</script>
+</body>
+</html>
